@@ -15,6 +15,8 @@ import itertools
 import time
 import math
 import os
+import numpy as np
+import matplotlib.pyplot as plt
 from coralObject import Coral
 
 execute='1'
@@ -122,54 +124,8 @@ def findBoundBox(vert):
 	if(vert[2]<minZ):
 		minZ=vert[2]
 	if(vert[2]>maxZ):
-		maxZ=vert[2]	
-	
-#*********************************************************************
-#			         Cost Variables and Calculation
-#*********************************************************************	
-
-def findTotalCost(objectVolume):
-
-	printTime=69.00
-	electricTariff =.26
-	printPower = 60.00
-	resinCostPerLiter = 150.00
-	printerPurchase = 3500.00
-	printerLife = 2.00
-	dailyUsage = 8
-	repairCosts = 10.00
-	otherCosts = .10
-	failureRate = 10
-	
-	
-	kWh = printPower/1000
-	dollarPerHour = electricTariff*kWh
-	energyCost = dollarPerHour*printTime
-	
-	
-	resinCost = resinCostPerLiter/1000*objectVolume
-	
-	 
-	hoursInLife = 365*printerLife*dailyUsage
-	deprecPerHour = printerPurchase/hoursInLife
-	deprecCost = deprecPerHour*printTime
-	
-	
-	lifetime = hoursInLife
-	repairsPerHour=(printerPurchase/100 * repairCosts)/lifetime
-	totalRepairCosts = repairsPerHour * printTime
-	
-	totalOtherCosts=otherCosts
-	
-	
-	
-	costsSoFar = energyCost + resinCost + deprecCost + totalRepairCosts + totalOtherCosts
-	failureCost = costsSoFar * failureRate/100
-	
-	totalCost = costsSoFar + failureCost
-	return totalCost
-
-
+		maxZ=vert[2]
+		
 def analyzeObject (fileName):
 	myCoral = Coral(fileName)
 
@@ -237,6 +193,7 @@ def analyzeObject (fileName):
 	width=abs(maxY-minY)
 	height=abs(maxZ-minZ)
 
+#	Some print statements to help with visualizing if writing to document doesn't work
 	print("\n\nThere are " + str(len(vertexList)) + " vertices.")
 	print("There are " + str(len(edgeList)) + " edges.")
 	print("There are " + str(len(faceList)) + " faces.")

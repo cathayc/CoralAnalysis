@@ -1,21 +1,19 @@
 from analyzeObj import analyzeObject
 from coralObject import *
 
-coralFileList = "D:\Members\Cathy\coralFileList.txt"
-coralDataOutputFile = "D:\Members\Cathy\dataOutput.txt"
+coralFileList = "D:\Members\Cathy\coralAnalysis\coralFileList.txt"
+coralDataOutputFile = "D:\Members\Cathy\coralAnalysis\dataOutput.txt"
 
 # Given a coral object, determine what to return to the output file
-def obtainCurrentCoralData(fileName, currentCoral):
-    fileName = currentCoral.fileName
+def obtainCurrentCoralData(currentCoral):
     sa=currentCoral.surfaceArea
     volume=currentCoral.volume
     analysisTime = currentCoral.analysisTime
 
     if sa == 0:
-        return fileName + " not found \n"
+        return currentCoral.fileName + " not found \n"
     else:
-
-        return fileName + " " + str(sa) + "  " + str(volume) + "    " + str(analysisTime) +"\n"
+        return currentCoral.fileName + " " + str(sa) + "  " + str(volume) + "    " + str(analysisTime) +"\n"
 
 # Open, parse and read coral file list, and return the list of corals in the coral file
 def openAndRead(coralFileList):
@@ -34,7 +32,7 @@ def analyzeAndWrite(coralList, coralDataOutputFile):
         for fileName in coralList:
             print(fileName)
             currentCoral = analyzeObject(fileName)
-            outputFile.write(obtainCurrentCoralData(fileName, currentCoral))
+            outputFile.write(obtainCurrentCoralData(currentCoral))
 
 
 # ----------------------------------------
