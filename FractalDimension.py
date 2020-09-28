@@ -4,6 +4,9 @@
 Created on Mon Sep 16 09:47:15 2019
 @author: daniel
 """
+from analyzeObj import analyzeObject
+from coralObject import Coral
+
 import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
@@ -81,7 +84,7 @@ def fractal_dimension(array, max_box_size = None, min_box_size = 1, n_samples = 
         ax.legend();
     return(coeffs[0])
 
-
+"""
 def getVertexCoord(vert):
 	xCoord=float(vert.lstrip('v ').split(' ')[0])
 	yCoord=float(vert.lstrip('v ').split(' ')[1])
@@ -105,7 +108,7 @@ def findVertices (fileName, vertexList):
                 vertexList.append(getVertexCoord(text[i]))
                 #vertexList.append(text[i])
     return vertexList
-
+"""
 def plotFromFDFile(filename):
     X, Y = [], []
     for line in open(filename, 'r'):
@@ -145,24 +148,26 @@ def plot_3D_dataset(vertices):
 #           Main method
 # -------------------------------
 
+myCoral2512 = analyzeObject("D:\Members\Cathy\\2512\\2512.obj")
+vertexList = myCoral2512.getVertexList()
+print(vertexList)
+
+
 plotFromFDFile("D:\Members\Cathy/2512/2512.txt")
 plotFromFDFile("D:\Members\Cathy/1358/1358.txt")
 plotFromFDFile("D:\Members\Cathy/1493/1493.txt")
 plotFromFDFile("D:\Members\Cathy/1600/1600.txt")
 weirdarray=np.ones((2, 3, 4))
-print(weirdarray)
+#print(weirdarray)
 
 #test data
 box = np.zeros(shape = (100,100,100))
 box[20:80,20:80,20:80] = 1
-print(box.sum())
+#print(box.sum())
 
 fd = fractal_dimension(box, n_offsets=10, plot = True)
-print(f"Fractal Dimension of the box: {fd}")
+#rint(f"Fractal Dimension of the box: {fd}")
 plt.show()
 
-#scale by 1000
-vertexList = findVertices("D:\Members\Cathy/2512/2512.obj", [])*1000
-#print(vertexList)
-#plot_3D_dataset(vertexList)
+#vertexList = findVertices("D:\Members\Cathy/2512/2512.obj", [])*1000
 

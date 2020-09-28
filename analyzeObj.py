@@ -19,8 +19,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 from coralObject import Coral
 
-execute='1'
-
 faceList=[]
 edgeList=[]
 vertexList=[]
@@ -103,12 +101,12 @@ def dot(a, b):
 	
 # Keep track of min/max values fro X/Y/Z	
 def findBoundBox(vert):
-	
+
 	global minX
-	global minY
-	global minZ
 	global maxX
+	global minY
 	global maxY
+	global minZ
 	global maxZ
 	
 	if(vert[0]<minX):
@@ -125,26 +123,41 @@ def findBoundBox(vert):
 		minZ=vert[2]
 	if(vert[2]>maxZ):
 		maxZ=vert[2]
-		
+
 def analyzeObject (fileName):
-	myCoral = Coral(fileName)
 
+	global faceList
+	global edgeList
+	global vertexList
+	global minX
+	global maxX
+	global minY
+	global maxY
+	global minZ
+	global maxZ
 	faceList.clear()
-	edgeList=[]
+	edgeList.clear()
 	vertexList.clear()
-
 	surfaceArea=0
 	volume=0
+	minX=math.inf
+	maxX=-math.inf
+	minY=math.inf
+	maxY=-math.inf
+	minZ=math.inf
+	maxZ=-math.inf
+	
 
 
 	# Get file name and handle incorrect/missing file names
 	try:
 		with open(fileName,'r') as file:
 			text=file.read().splitlines()
-			print("Coral file " + myCoral.fileName + " found!")
+			myCoral = Coral(fileName)
+			print("Coral file " + myCoral.coralName + " found!")
 	except IOError as e:
 		print(fileName + " not found, please try another file:")
-		return myCoral
+		return None
 		
 
 	# Start timer to analyze performance
@@ -157,6 +170,7 @@ def analyzeObject (fileName):
 				vertexList.append(text[i])
 			elif text[i][0]=='f':
 				faceList.append(text[i])
+	myCoral.vertexList = vertexList
 			
 	for i in range(0, len(faceList)):
 		# Break each face into the label numbers of each vertex
@@ -213,13 +227,11 @@ def analyzeObject (fileName):
 	elif holes==0:
 		myCoral.numHoles = 0
 	else:
-		myCoral.numHoles = str(holes)
-	myCoral.numEdges = str(len(edgeList))
-	myCoral.numVertices = str(len(vertexList))
-	myCoral.numFaces = str(len(faceList))
-	myCoral.boundLength = length
-	myCoral.boundWidth = width
-	myCoral.boundHeight = height
+		myCoral.numHoles = holes
+	myCoral.numEdges = len(edgeList)
+	myCoral.numVertices = len(vertexList)
+	myCoral.numFaces = len(faceList)
+	myCoral.boxDimensions = [minX, maxX, minY, maxY, minZ, maxZ]
 	myCoral.surfaceArea = surfaceArea
 	myCoral.volume = volume
 	myCoral.analysisTime = time.time() - start_time
@@ -227,11 +239,11 @@ def analyzeObject (fileName):
 	
 	
 #*********************************************************************
-#								Main
+#								testingMain
 #*********************************************************************
 
-#analyzeObject("D:\Members\Cathy/1991/1991-1.obj")
-	
+#coral2505 = analyzeObject("D:\Members\Cathy\\2505\\2505.obj")
+#print(coral2505.getVertexList())
 	
 	
 	
