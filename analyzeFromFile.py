@@ -13,8 +13,9 @@ def obtainCurrentCoralData(fileName, currentCoral):
         sa=currentCoral.surfaceArea
         volume=currentCoral.volume
         analysisTime = currentCoral.analysisTime
+        #fd = currentCoral.getOnlineFD()
         [boundingLength, boundingWidth, boundingHeight]=currentCoral.findBoundBox()
-        return str(coralName) + " | " + str(sa) + " | " + str(volume) + " | " + str(analysisTime) + " | " + str(boundingLength) + " | " + str(boundingWidth) + " | " + str(boundingHeight) + " | " + "\n"
+        return str(coralName) + " | " + str(sa) + " | " + str(volume) + " | " + str(analysisTime) + " | " + str(boundingLength) + " | " + str(boundingWidth) + " | " + str(boundingHeight) + "\n"
 
 # Open, parse and read coral file list, and return the list of corals in the coral file
 def openAndRead(coralFileList):

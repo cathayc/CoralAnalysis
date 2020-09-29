@@ -18,6 +18,7 @@ import os
 import numpy as np
 import matplotlib.pyplot as plt
 from coralObject import Coral
+#from FractalDimension import findOnlineFD, findFromFDFile
 
 faceList=[]
 edgeList=[]
@@ -206,6 +207,7 @@ def analyzeObject (fileName):
 	length=abs(maxX-minX)
 	width=abs(maxY-minY)
 	height=abs(maxZ-minZ)
+	boxDimensions = [minX, minY, minZ, maxX, maxY, maxZ]
 
 #	Some print statements to help with visualizing if writing to document doesn't work
 	print("\n\nThere are " + str(len(vertexList)) + " vertices.")
@@ -221,7 +223,7 @@ def analyzeObject (fileName):
 	print ("The surface area is {:,.3f}".format(surfaceArea) + " square mm.")
 	print ("The volume is {:,.3f}".format(volume) + " cubic mm.")
 	print ("\n\n--- Elapsed time: {:,.2f}".format(time.time() - start_time) + " seconds ---")
-	
+
 	if holes==1:
 		myCoral.numHoles = 1
 	elif holes==0:
@@ -231,10 +233,11 @@ def analyzeObject (fileName):
 	myCoral.numEdges = len(edgeList)
 	myCoral.numVertices = len(vertexList)
 	myCoral.numFaces = len(faceList)
-	myCoral.boxDimensions = [minX, maxX, minY, maxY, minZ, maxZ]
+	myCoral.boxDimensions = boxDimensions
 	myCoral.surfaceArea = surfaceArea
 	myCoral.volume = volume
 	myCoral.analysisTime = time.time() - start_time
+
 	return myCoral
 	
 	
@@ -242,7 +245,7 @@ def analyzeObject (fileName):
 #								testingMain
 #*********************************************************************
 
-#coral2505 = analyzeObject("D:\Members\Cathy\\2505\\2505.obj")
+coral2505 = analyzeObject("D:\Members\Cathy\\2505\\2505.obj")
 #print(coral2505.getVertexList())
 	
 	

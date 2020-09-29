@@ -12,6 +12,11 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.animation as animation
 
+def translateandScaleVertices(vertexList, translationCoordinates, scale):
+    [minX, minY, minZ] = translationCoordinates
+    newVertexList = [(int((x-minX)*scale), int((y-minY)*scale), int((z-minZ)*scale)) for (x, y, z) in vertexList]
+    return newVertexList
+
 def fractal_dimension(array, max_box_size = None, min_box_size = 1, n_samples = 20, n_offsets = 0, plot = False):
     """Calculates the fractal dimension of a 3D numpy array.
     
@@ -60,9 +65,7 @@ def fractal_dimension(array, max_box_size = None, min_box_size = 1, n_samples = 
     
     #From all sets N found, keep the smallest one at each scale
     Ns = Ns.min(axis=1)
-   
-    
-    
+
     #Only keep scales at which Ns changed
     scales  = np.array([np.min(scales[Ns == x]) for x in np.unique(Ns)])
     
@@ -84,40 +87,16 @@ def fractal_dimension(array, max_box_size = None, min_box_size = 1, n_samples = 
         ax.legend();
     return(coeffs[0])
 
-"""
-def getVertexCoord(vert):
-	xCoord=float(vert.lstrip('v ').split(' ')[0])
-	yCoord=float(vert.lstrip('v ').split(' ')[1])
-	zCoord=float(vert.lstrip('v ').split(' ')[2])
-	
-	return(xCoord,yCoord,zCoord)
-
-def findVertices (fileName, vertexList):
-    text = ""
-    try:
-        with open(fileName,'r') as file:
-            text=file.read().splitlines()
-            print("Coral file " + fileName + " found!")
-    except IOError as e:
-        print(fileName + " not found, please try another file:")
-
-    # Build lists of all vertices and faces		
-    for i in range(0, len(text)): 
-        if len(text[i])>1:
-            if text[i][0]=='v' and ' ' == text[i][1]:
-                vertexList.append(getVertexCoord(text[i]))
-                #vertexList.append(text[i])
-    return vertexList
-"""
-def plotFromFDFile(filename):
+def findFromFDFile(filename):
     X, Y = [], []
     for line in open(filename, 'r'):
         values = [float(s) for s in line.split()]
-        #print(values)
         X.append(values[2])
         Y.append(values[3])
     m, b = np.polyfit(X, Y, 1)
-    print("Fractal dimension of " + filename.split('/')[-2] + " : " + str(round(3-m, 3)))
+    fd = str(round(3-m, 3))
+    print("Jessica's fractal dimension of " + filename.split('\\')[-2] + " : " + fd)
+    return fd
     #print(b)
     #plt.plot(X, Y, 'o')
     #plt.plot(X, m*X[0] + b)
@@ -127,10 +106,10 @@ def plot_3D_dataset(vertices):
     X=[]
     Y=[]
     Z=[]
-    for vertex in vertexList[:9999]:
-        X.append(vertex[0]*100)
-        Y.append(vertex[1]*100)
-        Z.append(vertex[2]*100)
+    for vertex in vertices[:9999]:
+        X.append(vertex[0])
+        Y.append(vertex[1])
+        Z.append(vertex[2])
     
     # Creating figure 
     fig = plt.figure(figsize = (10, 7)) 
@@ -141,33 +120,71 @@ def plot_3D_dataset(vertices):
     plt.title("simple 3D scatter plot") 
     
     # show plot 
-    plt.show() 
+    plt.show()
+
+def checkOutOfBounds(newVertexList, oldVertexList, shapeDimension):
+    for i in range(len(newVertexList)):
+        [newX, newY, newZ] = newVertexList[i]
+        if newX>shapeDimension[0]:
+            print("x is out of bounds! " + str(newVertexList[i]) + " by this much " +str(newX-shapeDimension[0]))
+        if newY>shapeDimension[1]: 
+            print("y is out of bounds! " + str(newVertexList[i])+ " by this much " +str(newY-shapeDimension[1]))
+        if newZ>shapeDimension[2]:
+            print("z is out of bounds! " + str(newVertexList[i])+ " by this much " +str(newZ-shapeDimension[2]))
+
+def findOnlineFD(myCoral):
+    vertexList = myCoral.getVertexList()
+    shapeDimension = [int(x*20)+5 for x in myCoral.findBoundBox()]
+    newVertexList = translateandScaleVertices(vertexList, myCoral.boxDimensions[0:3], 20)
+    coralModel = np.zeros(shape = (shapeDimension))
+
+    for vertex in newVertexList:
+        coralModel[vertex]=1
+    fd = fractal_dimension(coralModel, n_offsets=10, plot = True)
+    print("Online fractal dimension: " + str(fd))
+    return fd
+
 
 
 # -------------------------------
 #           Main method
 # -------------------------------
 
-myCoral2512 = analyzeObject("D:\Members\Cathy\\2512\\2512.obj")
-vertexList = myCoral2512.getVertexList()
-print(vertexList)
+mycoral2505 = analyzeObject("D:\Members\Cathy\\2505\\2505.obj")
+findOnlineFD(mycoral2505)
+
+mycoral2512 = analyzeObject("D:\Members\Cathy\\2512\\2512.obj")
+findOnlineFD(mycoral2512)
+
+mycoral1493 = analyzeObject("D:\Members\Cathy\\1493\\1493.obj")
+findOnlineFD(mycoral1493)
+
+mycoral1600 = analyzeObject("D:\Members\Cathy\\1600\\1600.obj")
+findOnlineFD(mycoral1600)
+
+mycoral1358 = analyzeObject("D:\Members\Cathy\\1358\\1358.obj")
+findOnlineFD(mycoral1358)
+#coralModel = np.zeros(shape = (mycoral2505.findBoundBox())*100)
+#print(coralModel.shape)
+#print(newVertexList)
+#plot_3D_dataset(newVertexList)
 
 
-plotFromFDFile("D:\Members\Cathy/2512/2512.txt")
-plotFromFDFile("D:\Members\Cathy/1358/1358.txt")
-plotFromFDFile("D:\Members\Cathy/1493/1493.txt")
-plotFromFDFile("D:\Members\Cathy/1600/1600.txt")
-weirdarray=np.ones((2, 3, 4))
+#findFromFDFile("D:\Members\Cathy\\2505\\2505.txt")
+#plotFromFDFile("D:\Members\Cathy/1358/1358.txt")
+#plotFromFDFile("D:\Members\Cathy/1493/1493.txt")
+#plotFromFDFile("D:\Members\Cathy/1600/1600.txt")
+#weirdarray=np.ones((2, 3, 4))
 #print(weirdarray)
-
+"""
 #test data
 box = np.zeros(shape = (100,100,100))
 box[20:80,20:80,20:80] = 1
-#print(box.sum())
-
-fd = fractal_dimension(box, n_offsets=10, plot = True)
-#rint(f"Fractal Dimension of the box: {fd}")
-plt.show()
+print (box.shape)
+"""
+#fd = fractal_dimension(box, n_offsets=10, plot = True)
+#print(f"Fractal Dimension of the box: {fd}")
+#plt.show()
 
 #vertexList = findVertices("D:\Members\Cathy/2512/2512.obj", [])*1000
 
