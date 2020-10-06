@@ -23,7 +23,6 @@ from FractalDimension import findOnlineFD, findFromFDFile
 faceList=[]
 edgeList=[]
 vertexList=[]
-#vlist = []
 surfaceArea=0
 volume=0
 minX=math.inf
@@ -135,15 +134,9 @@ def getVlistCoord(vertex):
 
 def analyzeObject (fileName):
 
-	global faceList
-	global edgeList
-	global vertexList
-	global minX
-	global maxX
-	global minY
-	global maxY
-	global minZ
-	global maxZ
+	global faceList, edgeList, vertexList
+	global minX, maxX, minY, maxY, minZ, maxZ
+
 	faceList.clear()
 	edgeList.clear()
 	vertexList.clear()
@@ -155,8 +148,6 @@ def analyzeObject (fileName):
 	maxY=-math.inf
 	minZ=math.inf
 	maxZ=-math.inf
-	
-
 
 	# Get file name and handle incorrect/missing file names
 	try:
@@ -233,9 +224,15 @@ def analyzeObject (fileName):
 	myCoral.volume = volume
 
 	# Calculate fractal dimension
-	fd = findOnlineFD(vertexList, myCoral.findBoundBox(), boxDimensions)
-	myCoral.onlineFD = fd
+	onlineFD, onlineX, onlineY = findOnlineFD(vertexList, myCoral.findBoundBox(), boxDimensions)
+	myCoral.onlineFD = onlineFD
+	myCoral.onlineXY = onlineX, onlineY
+	fileFD, fileX, fileY = findFromFDFile(myCoral.jessicaFileName)
+	myCoral.fileFD = fileFD
+	myCoral.fileXY = fileX, fileY
+	myCoral.plotOnlineXY()
 	myCoral.analysisTime = time.time() - start_time
+
 
 #	Some print statements to help with visualizing if writing to document doesn't work
 	print("\n\nThere are " + str(len(vertexList)) + " vertices.")
@@ -250,7 +247,8 @@ def analyzeObject (fileName):
 	print ("\nThe bounding box dimensions are {:,.2f}".format(length) + "mm x " + "{:,.2f}".format(width) + "mm x " + "{:,.2f}".format(height) + "mm.")
 	print ("The surface area is {:,.3f}".format(surfaceArea) + " square mm.")
 	print ("The volume is {:,.3f}".format(volume) + " cubic mm.")
-	print ("The fractal dimension is " + str(fd))
+	print ("The fractal dimension is " + str(onlineFD))
+
 	print ("\n\n--- Elapsed time: {:,.2f}".format(time.time() - start_time) + " seconds ---")
 
 	return myCoral
@@ -259,5 +257,6 @@ def analyzeObject (fileName):
 #								testingMain
 #*********************************************************************
 
-coral2505 = analyzeObject("D:\Members\Cathy\\2505\\2505.obj")
+#coral2505 = analyzeObject("D:\Members\Cathy\\2505\\2505.obj")
+#coral2505.plotOnlineXY()
 #print(coral2505.getVertexList())
