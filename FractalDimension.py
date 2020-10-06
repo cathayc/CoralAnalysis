@@ -4,7 +4,7 @@
 Created on Mon Sep 16 09:47:15 2019
 @author: daniel
 """
-from analyzeObj import analyzeObject
+#from analyzeObj import analyzeObject
 from coralObject import Coral
 
 import numpy as np
@@ -17,7 +17,7 @@ def translateandScaleVertices(vertexList, translationCoordinates, scale):
     newVertexList = [(int((x-minX)*scale), int((y-minY)*scale), int((z-minZ)*scale)) for (x, y, z) in vertexList]
     return newVertexList
 
-def fractal_dimension(array, max_box_size = None, min_box_size = 1, n_samples = 20, n_offsets = 0, plot = False):
+def fractal_dimension(array, max_box_size = None, min_box_size = 1, n_samples = 20, n_offsets = 0, plot = True):
     """Calculates the fractal dimension of a 3D numpy array.
     
     Args:
@@ -73,6 +73,7 @@ def fractal_dimension(array, max_box_size = None, min_box_size = 1, n_samples = 
     Ns = np.unique(Ns)
     Ns = Ns[Ns > 0]
     scales = scales[:len(Ns)]
+    print(scales)
     #perform fit
     coeffs = np.polyfit(np.log(1/scales), np.log(Ns),1)
     
@@ -83,8 +84,9 @@ def fractal_dimension(array, max_box_size = None, min_box_size = 1, n_samples = 
         ax.set_ylabel("$\log N(\epsilon)$")
         ax.set_xlabel("$\log 1/ \epsilon$")
         fitted_y_vals = np.polyval(coeffs, np.log(1/scales))
-        ax.plot(np.log(1/scales), fitted_y_vals, "k--", label = f"Fit: {np.round(coeffs[0],3)}X+{coeffs[1]}")
-        ax.legend();
+        ax.plot(np.log(1/scales), fitted_y_vals, "k--", label = f"Fit: {np.round(coeffs[0],3)}X+{coeffs[1]}", c="teal")
+        ax.legend()
+        plt.savefig('hurro')
     return(coeffs[0])
 
 def findFromFDFile(filename):
@@ -96,11 +98,13 @@ def findFromFDFile(filename):
     m, b = np.polyfit(X, Y, 1)
     fd = str(round(3-m, 3))
     print("Jessica's fractal dimension of " + filename.split('\\')[-2] + " : " + fd)
+    plt.plot(X, Y, 'o')
+    #plt.plot(X, m*X[0] + b)
+    plt.show()
+    plt.savefig('Jessica2505')
     return fd
     #print(b)
-    #plt.plot(X, Y, 'o')
-    #plt.plot(X, m*X[0] + b)
-    #plt.show()
+    
 
 def plot_3D_dataset(vertices):
     X=[]
@@ -132,10 +136,9 @@ def checkOutOfBounds(newVertexList, oldVertexList, shapeDimension):
         if newZ>shapeDimension[2]:
             print("z is out of bounds! " + str(newVertexList[i])+ " by this much " +str(newZ-shapeDimension[2]))
 
-def findOnlineFD(myCoral):
-    vertexList = myCoral.getVertexList()
-    shapeDimension = [int(x*20)+5 for x in myCoral.findBoundBox()]
-    newVertexList = translateandScaleVertices(vertexList, myCoral.boxDimensions[0:3], 20)
+def findOnlineFD(vertexList, boundBox, boxDimensions):
+    shapeDimension = [int(x*20)+5 for x in boundBox]
+    newVertexList = translateandScaleVertices(vertexList, boxDimensions[0:3], 20)
     coralModel = np.zeros(shape = (shapeDimension))
 
     for vertex in newVertexList:
@@ -145,11 +148,10 @@ def findOnlineFD(myCoral):
     return fd
 
 
-
 # -------------------------------
 #           Main method
 # -------------------------------
-
+"""
 mycoral2505 = analyzeObject("D:\Members\Cathy\\2505\\2505.obj")
 findOnlineFD(mycoral2505)
 
@@ -168,9 +170,9 @@ findOnlineFD(mycoral1358)
 #print(coralModel.shape)
 #print(newVertexList)
 #plot_3D_dataset(newVertexList)
+"""
 
-
-#findFromFDFile("D:\Members\Cathy\\2505\\2505.txt")
+findFromFDFile("D:\Members\Cathy\\2505\\2505.txt")
 #plotFromFDFile("D:\Members\Cathy/1358/1358.txt")
 #plotFromFDFile("D:\Members\Cathy/1493/1493.txt")
 #plotFromFDFile("D:\Members\Cathy/1600/1600.txt")

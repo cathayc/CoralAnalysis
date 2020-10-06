@@ -18,11 +18,12 @@ import os
 import numpy as np
 import matplotlib.pyplot as plt
 from coralObject import Coral
-#from FractalDimension import findOnlineFD, findFromFDFile
+from FractalDimension import findOnlineFD, findFromFDFile
 
 faceList=[]
 edgeList=[]
 vertexList=[]
+#vlist = []
 surfaceArea=0
 volume=0
 minX=math.inf
@@ -54,11 +55,12 @@ def triArea(u,v,w):
 
 # Returns the X, Y, and Z coordinates of a vertex given its label number
 def getVertexCoord(vert):
-	xCoord=float(vertexList[int(vert)-1].lstrip('v ').split(' ')[0])
-	yCoord=float(vertexList[int(vert)-1].lstrip('v ').split(' ')[1])
-	zCoord=float(vertexList[int(vert)-1].lstrip('v ').split(' ')[2])
-	
-	return(xCoord,yCoord,zCoord)
+	#xCoord=float(vertexList[int(vert)-1].lstrip('v ').split(' ')[0])
+	#yCoord=float(vertexList[int(vert)-1].lstrip('v ').split(' ')[1])
+	#zCoord=float(vertexList[int(vert)-1].lstrip('v ').split(' ')[2])
+	coord = vertexList[int(vert)-1]
+	return coord
+	#return(xCoord,yCoord,zCoord)
 	
 # Calculate Euclidean distance	
 def dist(a,b,c,d,e,f): 
@@ -125,6 +127,12 @@ def findBoundBox(vert):
 	if(vert[2]>maxZ):
 		maxZ=vert[2]
 
+def getVlistCoord(vertex):
+	xCoord=float(vertex.lstrip('v ').split(' ')[0])
+	yCoord=float(vertex.lstrip('v ').split(' ')[1])
+	zCoord=float(vertex.lstrip('v ').split(' ')[2])
+	return (xCoord, yCoord, zCoord)
+
 def analyzeObject (fileName):
 
 	global faceList
@@ -160,7 +168,6 @@ def analyzeObject (fileName):
 		print(fileName + " not found, please try another file:")
 		return None
 		
-
 	# Start timer to analyze performance
 	start_time = time.time()	
 
@@ -168,7 +175,9 @@ def analyzeObject (fileName):
 	for i in range(0, len(text)): 
 		if len(text[i])>1:
 			if text[i][0]=='v' and ' ' == text[i][1]:
-				vertexList.append(text[i])
+				vertexList.append(getVlistCoord(text[i]))
+				#vertexList.append(text[i])
+				#vlist.append(getVlistCoord(text[i]))
 			elif text[i][0]=='f':
 				faceList.append(text[i])
 	myCoral.vertexList = vertexList
@@ -209,6 +218,25 @@ def analyzeObject (fileName):
 	height=abs(maxZ-minZ)
 	boxDimensions = [minX, minY, minZ, maxX, maxY, maxZ]
 
+	# Set coral object attributes
+	if holes==1:
+		myCoral.numHoles = 1
+	elif holes==0:
+		myCoral.numHoles = 0
+	else:
+		myCoral.numHoles = holes
+	myCoral.numEdges = len(edgeList)
+	myCoral.numVertices = len(vertexList)
+	myCoral.numFaces = len(faceList)
+	myCoral.boxDimensions = boxDimensions
+	myCoral.surfaceArea = surfaceArea
+	myCoral.volume = volume
+
+	# Calculate fractal dimension
+	fd = findOnlineFD(vertexList, myCoral.findBoundBox(), boxDimensions)
+	myCoral.onlineFD = fd
+	myCoral.analysisTime = time.time() - start_time
+
 #	Some print statements to help with visualizing if writing to document doesn't work
 	print("\n\nThere are " + str(len(vertexList)) + " vertices.")
 	print("There are " + str(len(edgeList)) + " edges.")
@@ -222,24 +250,10 @@ def analyzeObject (fileName):
 	print ("\nThe bounding box dimensions are {:,.2f}".format(length) + "mm x " + "{:,.2f}".format(width) + "mm x " + "{:,.2f}".format(height) + "mm.")
 	print ("The surface area is {:,.3f}".format(surfaceArea) + " square mm.")
 	print ("The volume is {:,.3f}".format(volume) + " cubic mm.")
+	print ("The fractal dimension is " + str(fd))
 	print ("\n\n--- Elapsed time: {:,.2f}".format(time.time() - start_time) + " seconds ---")
 
-	if holes==1:
-		myCoral.numHoles = 1
-	elif holes==0:
-		myCoral.numHoles = 0
-	else:
-		myCoral.numHoles = holes
-	myCoral.numEdges = len(edgeList)
-	myCoral.numVertices = len(vertexList)
-	myCoral.numFaces = len(faceList)
-	myCoral.boxDimensions = boxDimensions
-	myCoral.surfaceArea = surfaceArea
-	myCoral.volume = volume
-	myCoral.analysisTime = time.time() - start_time
-
 	return myCoral
-	
 	
 #*********************************************************************
 #								testingMain
@@ -247,10 +261,3 @@ def analyzeObject (fileName):
 
 coral2505 = analyzeObject("D:\Members\Cathy\\2505\\2505.obj")
 #print(coral2505.getVertexList())
-	
-	
-	
-	
-	
-	
-	

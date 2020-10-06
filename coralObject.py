@@ -1,5 +1,3 @@
-from FractalDimension import findOnlineFD, findFromFDFile
-
 class Coral:
     coralName = ""
     numEdges = 0
@@ -23,7 +21,7 @@ class Coral:
     def findBoundBox(self):
         [minX, minY, minZ, maxX, maxY, maxZ] = self.boxDimensions
         return [maxX-minX, maxY-minY, maxZ-minZ]
-    
+"""
     def getVertexList(self):
         if self.vertexList[0][0]=="v":
             trueList = []
@@ -34,7 +32,4 @@ class Coral:
                 trueList.append((xCoord, yCoord, zCoord))
             self.vertexList = trueList
         return self.vertexList
-    
-    def getOnlineFD(self):
-        fd = findOnlineFD(self.getVertexList(), self.findBoundBox(), self.boxDimensions)
-        return fd
+"""
