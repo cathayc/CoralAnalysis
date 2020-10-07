@@ -230,7 +230,7 @@ def analyzeObject (fileName):
 	fileFD, fileX, fileY = findFromFDFile(myCoral.jessicaFileName)
 	myCoral.fileFD = fileFD
 	myCoral.fileXY = fileX, fileY
-	myCoral.plotOnlineXY()
+	myCoral.plotBothFD()
 	myCoral.analysisTime = time.time() - start_time
 
 
@@ -257,6 +257,7 @@ def analyzeObject (fileName):
 #								testingMain
 #*********************************************************************
 
-#coral2505 = analyzeObject("D:\Members\Cathy\\2505\\2505.obj")
-#coral2505.plotOnlineXY()
+coral2505 = analyzeObject("D:\Members\Cathy\\2505\\2505.obj")
+coral2505.plotOnlineXY(online = False, file = True)
+coral2505.plotBothFD()
 #print(coral2505.getVertexList())

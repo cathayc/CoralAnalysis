@@ -13,7 +13,6 @@ class Coral:
     analysisTime = 0
     onlineFD = 0
     onlineXY = []
-    #[minX, minY, minZ, maxX, maxY, maxZ]
     boxDimensions=[]
     jessicaFileName = ""
     fileFD = 0
@@ -27,16 +26,48 @@ class Coral:
         [minX, minY, minZ, maxX, maxY, maxZ] = self.boxDimensions
         return [maxX-minX, maxY-minY, maxZ-minZ]
     
-    def plotOnlineXY(self):
-        X, Y = self.onlineXY
+    def plotOnlineXY(self, online=True, file=False):
+        X = Y = []
+        fd = 0
+        figTitle = ""
+        if online:
+            X, Y = self.onlineXY
+            fd = self.onlineFD
+            figTitle =  self.coralName + "online_FD"
+        else:
+            X, Y = self.fileXY
+            fd = self.fileFD
+            figTitle =  self.coralName + "file_FD"
         fig, ax = plt.subplots(figsize = (8,6))
         ax.scatter(X, Y, c = "teal", label = "Measured ratios")
         ax.set_ylabel("$\log N(\epsilon)$")
         ax.set_xlabel("$\log 1/ \epsilon$")
         m, b = np.polyfit(X, Y, 1)
-        plt.title(self.coralName + "Fractal dimension: " + str(self.onlineFD))
-        plt.plot(X, m*X + b)
-        plt.savefig(self.coralName + "onlineFD")
+        plt.title(figTitle + str(fd))
+        #plt.plot(np.array(X), m*np.array(X) + b)
+        plt.savefig(figTitle)
+    
+    def plotBothFD(self):
+        fig, ax = plt.subplots(figsize = (8,6))
+        ax.set_ylabel("$\log N(\epsilon)$")
+        ax.set_xlabel("$\log 1/ \epsilon$")
+
+        #First plot online FD
+        X, Y = self.onlineXY
+        m1, b = np.polyfit(X, Y, 1)
+        ax.scatter(X, Y, c = "teal", label = "online FD")
+        #plt.plot(X, m1*np.array(X) + b)
+
+        #Then plot file FD
+        X, Y = self.fileXY
+        m2, b = np.polyfit(X, Y, 1)
+        ax.scatter(X, Y, c = "yellow", label = "file FD")
+        #plt.plot(X, m2*X + b)
+
+        #Save the file
+        plt.title(self.coralName + "'s both online FD: " + str(m1) + " & file FD:  " + str(m2))
+        plt.savefig(self.coralName+"both")
+
 """
     def findFromFDFile(self):
         X, Y = [], []
