@@ -12,7 +12,7 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.animation as animation
 
-def fractal_dimension(array, dilation, max_box_size = None, min_box_size = 1, n_samples = 20, n_offsets = 0, plot = False):
+def fractal_dimension(array, dilation, max_box_size = None, min_box_size = 1, n_samples = 20, n_offsets = 0):
     """Calculates the fractal dimension of a 3D numpy array.
     
     Args:
@@ -68,8 +68,6 @@ def fractal_dimension(array, dilation, max_box_size = None, min_box_size = 1, n_
     Ns = Ns[Ns > 0]
     scales = scales[:len(Ns)]
     #perform fit
-    print("scales: ")
-    print(scales)
     #rescale from dilation and mm to m
     X = -np.log((scales/dilation/1000))
     Y = np.log(np.unique(Ns))
@@ -90,7 +88,7 @@ def findOnlineFD(vertexList, boundBox, boxDimensions):
 
     for vertex in newVertexList:
         coralModel[vertex]=1
-    fd, X, Y = fractal_dimension(coralModel, dilation, n_offsets=10, plot = False)
+    fd, X, Y = fractal_dimension(coralModel, dilation, n_offsets=10)
 
     print("Online fractal dimension: " + str(fd))
     return fd, X, Y
@@ -107,8 +105,32 @@ def findFromFDFile(filename):
     m, b = np.polyfit(X, Y, 1)
     print("Jessica's fractal dimension of " + filename.split('\\')[-2] + " : " + str(m))
     return m, X, Y
-    
-"""
+
+def createBox(length, numVertices):
+    outputFile = "D:\Members\Cathy\\box\\box.obj"
+    stepSize = length/numVertices
+    box=[]
+
+    with open(outputFile, 'a') as boxFile:
+        boxFile.truncate(0)
+        boxFile.write('#box created manually\n\n')
+        for i in range(numVertices):
+            for j in range(numVertices):
+                vBot= f'v {i*stepSize} {j*stepSize} 0'
+                vTop=f'v {i*stepSize} {j*stepSize} {length-1}'
+                vLeft=f'v 0 {j*stepSize} {i*stepSize}'
+                vRight=f'v {length-1} {i*stepSize} {j*stepSize}'
+                vFront=f'v {i*stepSize} 0 {j*stepSize}'
+                vBack=f'v {i*stepSize} {length-1} {j*stepSize}'
+                boxFile.write(f'{vBot}\n{vTop}\n{vLeft}\n{vRight}\n{vFront}\n{vBack}\n')
+        
+        for x in range(6*numVertices*numVertices):
+            if x%3==0:
+                boxFile.write("\nf ")
+            boxFile.write(str(x+1) + " ")
+
+createBox(10, 1000)
+
 def plot_3D_dataset(vertices):
     X=[]
     Y=[]
@@ -129,6 +151,8 @@ def plot_3D_dataset(vertices):
     # show plot 
     plt.show()
 
+#createBox(10, 100)
+"""
 def checkOutOfBounds(newVertexList, oldVertexList, shapeDimension):
     for i in range(len(newVertexList)):
         [newX, newY, newZ] = newVertexList[i]

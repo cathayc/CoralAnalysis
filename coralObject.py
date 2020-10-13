@@ -28,13 +28,20 @@ class Coral:
     
     
     def plotBothFD(self):
-        fig, (ax1, ax2, ax3) = plt.subplots(3, 1)
+        saveFilePath = "D:\Members\Cathy\coralAnalysis\output\\"
+        fig, (ax1, ax2, ax3) = plt.subplots(3, 1, figsize=(8, 10))
         # make a little extra space between the subplots
-        fig.subplots_adjust(hspace=2)
+        fig.subplots_adjust(hspace=0.5)
+        ax1.set_ylim(0, 15)
+        ax2.set_ylim(10, 20)
+        ax3.set_ylim(0, 20)
+        ax1.set_xlim(-4, 4)
+        ax2.set_xlim(-1, 3)
+        ax3.set_xlim(-4, 4)
 
         #First plot online FD
-        ax1.set_ylabel("log(N(e))")
-        ax1.set_xlabel("log(1/e)")
+        ax1.set_ylabel(r'$log(N(\epsilon))$')
+        ax1.set_xlabel(r'$log(N( \frac{1}{\epsilon}))$')
         X1, Y1 = self.onlineXY
         m1, b1 = np.polyfit(X1, Y1, 1)
         ax1.scatter(X1-6, Y1, c = "teal", label = "online FD")
@@ -42,21 +49,22 @@ class Coral:
         ax1.plot(X1-6, m1*np.array(X1) + b1)
 
         #Then plot file FD
-        ax2.set_ylabel("log(Influence_Volume(mm^2))")
-        ax2.set_xlabel("log(Dilation_Radius(m))")
+        ax2.set_ylabel(r'$log(V(r))$')
+        ax2.set_xlabel(r'$log(r)$')
         X2, Y2 = self.fileXY
         m2, b2 = np.polyfit(X2, Y2, 1)
-        ax2.scatter(X2, Y2, c = "yellow", label = "file FD")
-        ax2.set_title(self.coralName + "'s file FD:  " + str(self.fileFD))
-        ax2.plot(X2, m2*np.array(X2) + b2)
+        ax2.scatter(X2, Y2, c = "red", label = "file FD")
+        ax2.set_title(self.coralName + "'s file FD:  " + str(round(self.fileFD, 3)))
+        ax2.plot(X2, m2*np.array(X2) + b2, color="orange")
 
+        #Plot both on the same graph
         diff = X1[0]-X2[0]
         ax3.scatter(X1-diff, Y1, c = "teal", label = "online FD")
-        ax3.scatter(X2, Y2, c = "yellow", label = "file FD")
+        ax3.scatter(X2, Y2, c = "red", label = "file FD")
         ax3.set_title("both")
         ax3.plot(X1-diff, m1*np.array(X1) + b1)
-        ax3.plot(X2, m2*np.array(X2) + b2)
-        plt.savefig(self.coralName+"both")
+        ax3.plot(X2, m2*np.array(X2) + b2, color="orange")
+        plt.savefig(saveFilePath + self.coralName)
         
 
 """

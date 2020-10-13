@@ -2,7 +2,7 @@ from analyzeObj import analyzeObject
 from coralObject import *
 
 coralFileList = "D:\Members\Cathy\coralAnalysis\coralFileList.txt"
-coralDataOutputFile = "D:\Members\Cathy\coralAnalysis\dataOutput.txt"
+coralDataOutputFile = "D:\Members\Cathy\coralAnalysis\output\dataOutput.txt"
 
 # Given a coral object, determine what to return to the output file
 def obtainCurrentCoralData(fileName, currentCoral):
