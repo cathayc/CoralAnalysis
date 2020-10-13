@@ -247,7 +247,7 @@ def analyzeObject (fileName):
 	print ("\nThe bounding box dimensions are {:,.2f}".format(length) + "mm x " + "{:,.2f}".format(width) + "mm x " + "{:,.2f}".format(height) + "mm.")
 	print ("The surface area is {:,.3f}".format(surfaceArea) + " square mm.")
 	print ("The volume is {:,.3f}".format(volume) + " cubic mm.")
-	print ("The fractal dimension is " + str(onlineFD))
+#	print ("The fractal dimension is " + str(onlineFD))
 
 	print ("\n\n--- Elapsed time: {:,.2f}".format(time.time() - start_time) + " seconds ---")
 
@@ -257,7 +257,7 @@ def analyzeObject (fileName):
 #								testingMain
 #*********************************************************************
 
-coral2505 = analyzeObject("D:\Members\Cathy\\2505\\2505.obj")
-coral2505.plotOnlineXY(online = False, file = True)
-coral2505.plotBothFD()
+#coral2505 = analyzeObject("D:\Members\Cathy\\2505\\2505.obj")
+#coral2505.plotOnlineXY(online = False, file = True)
+#coral2505.plotBothFD()
 #print(coral2505.getVertexList())

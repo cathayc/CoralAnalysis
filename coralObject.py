@@ -26,6 +26,40 @@ class Coral:
         [minX, minY, minZ, maxX, maxY, maxZ] = self.boxDimensions
         return [maxX-minX, maxY-minY, maxZ-minZ]
     
+    
+    def plotBothFD(self):
+        fig, (ax1, ax2, ax3) = plt.subplots(3, 1)
+        # make a little extra space between the subplots
+        fig.subplots_adjust(hspace=2)
+
+        #First plot online FD
+        ax1.set_ylabel("log(N(e))")
+        ax1.set_xlabel("log(1/e)")
+        X1, Y1 = self.onlineXY
+        m1, b1 = np.polyfit(X1, Y1, 1)
+        ax1.scatter(X1-6, Y1, c = "teal", label = "online FD")
+        ax1.set_title(self.coralName + "'s online FD: " + str(round(self.onlineFD, 3)))
+        ax1.plot(X1-6, m1*np.array(X1) + b1)
+
+        #Then plot file FD
+        ax2.set_ylabel("log(Influence_Volume(mm^2))")
+        ax2.set_xlabel("log(Dilation_Radius(m))")
+        X2, Y2 = self.fileXY
+        m2, b2 = np.polyfit(X2, Y2, 1)
+        ax2.scatter(X2, Y2, c = "yellow", label = "file FD")
+        ax2.set_title(self.coralName + "'s file FD:  " + str(self.fileFD))
+        ax2.plot(X2, m2*np.array(X2) + b2)
+
+        diff = X1[0]-X2[0]
+        ax3.scatter(X1-diff, Y1, c = "teal", label = "online FD")
+        ax3.scatter(X2, Y2, c = "yellow", label = "file FD")
+        ax3.set_title("both")
+        ax3.plot(X1-diff, m1*np.array(X1) + b1)
+        ax3.plot(X2, m2*np.array(X2) + b2)
+        plt.savefig(self.coralName+"both")
+        
+
+"""
     def plotOnlineXY(self, online=True, file=False):
         X = Y = []
         fd = 0
@@ -46,29 +80,7 @@ class Coral:
         plt.title(figTitle + str(fd))
         #plt.plot(np.array(X), m*np.array(X) + b)
         plt.savefig(figTitle)
-    
-    def plotBothFD(self):
-        fig, ax = plt.subplots(figsize = (8,6))
-        ax.set_ylabel("$\log N(\epsilon)$")
-        ax.set_xlabel("$\log 1/ \epsilon$")
 
-        #First plot online FD
-        X, Y = self.onlineXY
-        m1, b = np.polyfit(X, Y, 1)
-        ax.scatter(X, Y, c = "teal", label = "online FD")
-        #plt.plot(X, m1*np.array(X) + b)
-
-        #Then plot file FD
-        X, Y = self.fileXY
-        m2, b = np.polyfit(X, Y, 1)
-        ax.scatter(X, Y, c = "yellow", label = "file FD")
-        #plt.plot(X, m2*X + b)
-
-        #Save the file
-        plt.title(self.coralName + "'s both online FD: " + str(m1) + " & file FD:  " + str(m2))
-        plt.savefig(self.coralName+"both")
-
-"""
     def findFromFDFile(self):
         X, Y = [], []
         file = self.jessicaFileName

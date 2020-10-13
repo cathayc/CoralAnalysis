@@ -12,7 +12,7 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.animation as animation
 
-def fractal_dimension(array, max_box_size = None, min_box_size = 1, n_samples = 20, n_offsets = 0, plot = False):
+def fractal_dimension(array, dilation, max_box_size = None, min_box_size = 1, n_samples = 20, n_offsets = 0, plot = False):
     """Calculates the fractal dimension of a 3D numpy array.
     
     Args:
@@ -68,36 +68,42 @@ def fractal_dimension(array, max_box_size = None, min_box_size = 1, n_samples = 
     Ns = Ns[Ns > 0]
     scales = scales[:len(Ns)]
     #perform fit
-    #rescale from 
-    X = np.log(1/(scales/100))
+    print("scales: ")
+    print(scales)
+    #rescale from dilation and mm to m
+    X = -np.log((scales/dilation/1000))
     Y = np.log(np.unique(Ns))
     coeffs = np.polyfit(X, np.log(Ns),1)
     fd = coeffs[0]
     return fd, X, Y
 
-def translateandScaleVertices(vertexList, translationCoordinates, scale):
+def translateandScaleVertices(vertexList, translationCoordinates, dilation):
     [minX, minY, minZ] = translationCoordinates
-    newVertexList = [(int((x-minX)*scale), int((y-minY)*scale), int((z-minZ)*scale)) for (x, y, z) in vertexList]
+    newVertexList = [(int((x-minX)*dilation), int((y-minY)*dilation), int((z-minZ)*dilation)) for (x, y, z) in vertexList]
     return newVertexList
 
 def findOnlineFD(vertexList, boundBox, boxDimensions):
-    shapeDimension = [int(x*20)+5 for x in boundBox]
-    newVertexList = translateandScaleVertices(vertexList, boxDimensions[0:3], 20)
+    dilation = 20
+    shapeDimension = [int(x*dilation)+5 for x in boundBox]
+    newVertexList = translateandScaleVertices(vertexList, boxDimensions[0:3], dilation)
     coralModel = np.zeros(shape = (shapeDimension))
 
     for vertex in newVertexList:
         coralModel[vertex]=1
-    fd, X, Y = fractal_dimension(coralModel, n_offsets=10, plot = False)
+    fd, X, Y = fractal_dimension(coralModel, dilation, n_offsets=10, plot = False)
+
     print("Online fractal dimension: " + str(fd))
     return fd, X, Y
 
 def findFromFDFile(filename):
     X, Y = [], []
-    for line in open(filename, 'r'):
+    file = open(filename, 'r')
+    for line in file:
         values = [float(s) for s in line.split()]
-        #subtract by 3 to scale down by 1000, because r=1 is 0.2mm
-        X.append(values[2]-3)
+        #r=1 is 0.2mm, so convert the radius from 0.2mm to 1m
+        X.append(np.log(values[1]/2))
         Y.append(values[3])
+    file.close()
     m, b = np.polyfit(X, Y, 1)
     print("Jessica's fractal dimension of " + filename.split('\\')[-2] + " : " + str(m))
     return m, X, Y
@@ -132,4 +138,12 @@ def checkOutOfBounds(newVertexList, oldVertexList, shapeDimension):
             print("y is out of bounds! " + str(newVertexList[i])+ " by this much " +str(newY-shapeDimension[1]))
         if newZ>shapeDimension[2]:
             print("z is out of bounds! " + str(newVertexList[i])+ " by this much " +str(newZ-shapeDimension[2]))
+
+
+box = np.zeros(shape = (100,100,100))
+box[20:80,20:80,20:80] = 1
+
+fd = fractal_dimension(box, 10, n_offsets=10, plot = True)
+print(f"Fractal Dimension of the box: {fd}")
+plt.show()
 """
