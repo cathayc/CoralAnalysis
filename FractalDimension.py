@@ -103,8 +103,8 @@ def findFromFDFile(filename):
         Y.append(values[3])
     file.close()
     m, b = np.polyfit(X, Y, 1)
-    print("Jessica's fractal dimension of " + filename.split('\\')[-2] + " : " + str(m))
-    return m, X, Y
+    print("Jessica's fractal dimension of " + filename.split('\\')[-2] + " : " + str(3-m))
+    return (3-m), X, Y
 
 def createBox(length, numVertices):
     outputFile = "D:\Members\Cathy\\box\\box.obj"
