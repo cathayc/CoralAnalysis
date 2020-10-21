@@ -126,10 +126,11 @@ def findBoundBox(vert):
 	if(vert[2]>maxZ):
 		maxZ=vert[2]
 
-def getVlistCoord(vertex):
-	xCoord=float(vertex.lstrip('v ').split(' ')[0])
-	yCoord=float(vertex.lstrip('v ').split(' ')[1])
-	zCoord=float(vertex.lstrip('v ').split(' ')[2])
+# Converts either vertex or vertex normal into normal coordinates
+def getListCoord(vertex, v):
+	xCoord=float(vertex.lstrip(v).split(' ')[0])
+	yCoord=float(vertex.lstrip(v).split(' ')[1])
+	zCoord=float(vertex.lstrip(v).split(' ')[2])
 	return (xCoord, yCoord, zCoord)
 
 def analyzeObject (fileName):
@@ -166,9 +167,7 @@ def analyzeObject (fileName):
 	for i in range(0, len(text)): 
 		if len(text[i])>1:
 			if text[i][0]=='v' and ' ' == text[i][1]:
-				vertexList.append(getVlistCoord(text[i]))
-				#vertexList.append(text[i])
-				#vlist.append(getVlistCoord(text[i]))
+				vertexList.append(getListCoord(text[i], "v "))
 			elif text[i][0]=='f':
 				faceList.append(text[i])
 	myCoral.vertexList = vertexList

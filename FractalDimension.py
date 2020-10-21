@@ -80,14 +80,37 @@ def translateandScaleVertices(vertexList, translationCoordinates, dilation):
     newVertexList = [(int((x-minX)*dilation), int((y-minY)*dilation), int((z-minZ)*dilation)) for (x, y, z) in vertexList]
     return newVertexList
 
+"""
+def fillSlice(vertexArray):
+    filledSlice = []
+    # Find all vertices
+    vX, vY = np.nonzero(vertexArray)
+    for y in range(len(vertexArray[0])):
+        print(vertexArray[y])
+        #print(np.nonzero(vertexArray[y]))
+    return filledSlice
+"""
+
+#Given a list of vertices, convert it to 3D numpy array 
+def convertToNumpyArray(vertexList, shapeDimension):
+    # First create the 3D array of vertices
+    vertexArray = filledArray = np.zeros(shape = (shapeDimension))
+    for vertex in vertexList:
+        vertexArray[vertex]=1
+    
+    # Loop through each slice of the 3D array
+#    for x in range(shapeDimension[0]):
+#        # fill each 2D slice if the slice isn't empty
+#        if not np.all((vertexArray[x]==0)):
+#            filledArray[x] = fillSlice(vertexArray[x])
+    return vertexArray
+
 def findOnlineFD(vertexList, boundBox, boxDimensions):
     dilation = 20
     shapeDimension = [int(x*dilation)+5 for x in boundBox]
     newVertexList = translateandScaleVertices(vertexList, boxDimensions[0:3], dilation)
-    coralModel = np.zeros(shape = (shapeDimension))
+    coralModel = convertToNumpyArray(newVertexList, shapeDimension)
 
-    for vertex in newVertexList:
-        coralModel[vertex]=1
     fd, X, Y = fractal_dimension(coralModel, dilation, n_offsets=10)
 
     print("Online fractal dimension: " + str(fd))
@@ -106,36 +129,11 @@ def findFromFDFile(filename):
     print("Jessica's fractal dimension of " + filename.split('\\')[-2] + " : " + str(3-m))
     return (3-m), X, Y
 
-def createBox(length, numVertices):
-    outputFile = "D:\Members\Cathy\\box\\box.obj"
-    stepSize = length/numVertices
-    box=[]
-
-    with open(outputFile, 'a') as boxFile:
-        boxFile.truncate(0)
-        boxFile.write('#box created manually\n\n')
-        for i in range(numVertices):
-            for j in range(numVertices):
-                vBot= f'v {i*stepSize} {j*stepSize} 0'
-                vTop=f'v {i*stepSize} {j*stepSize} {length-1}'
-                vLeft=f'v 0 {j*stepSize} {i*stepSize}'
-                vRight=f'v {length-1} {i*stepSize} {j*stepSize}'
-                vFront=f'v {i*stepSize} 0 {j*stepSize}'
-                vBack=f'v {i*stepSize} {length-1} {j*stepSize}'
-                boxFile.write(f'{vBot}\n{vTop}\n{vLeft}\n{vRight}\n{vFront}\n{vBack}\n')
-        
-        for x in range(6*numVertices*numVertices):
-            if x%3==0:
-                boxFile.write("\nf ")
-            boxFile.write(str(x+1) + " ")
-
-createBox(10, 1000)
-
 def plot_3D_dataset(vertices):
     X=[]
     Y=[]
     Z=[]
-    for vertex in vertices[:9999]:
+    for vertex in vertices:
         X.append(vertex[0])
         Y.append(vertex[1])
         Z.append(vertex[2])
@@ -151,7 +149,29 @@ def plot_3D_dataset(vertices):
     # show plot 
     plt.show()
 
-#createBox(10, 100)
+def createBox(length, numVertices):
+    outputFile = "D:\Members\Cathy\\box\\box.obj"
+    stepSize = length/numVertices
+    box=[]
+
+    with open(outputFile, 'a') as boxFile:
+        boxFile.truncate(0)
+        boxFile.write('#box created manually\n\n')
+        for i in range(numVertices):
+            for j in range(numVertices):
+                vBot= f'v {i*stepSize} {j*stepSize} 0'
+                vTop=f'v {i*stepSize} {j*stepSize} {length}'
+                vLeft=f'v 0 {j*stepSize} {i*stepSize}'
+                vRight=f'v {length} {i*stepSize} {j*stepSize}'
+                vFront=f'v {i*stepSize} 0 {j*stepSize}'
+                vBack=f'v {i*stepSize} {length} {j*stepSize}'
+                boxFile.write(f'{vBot}\n{vTop}\n{vLeft}\n{vRight}\n{vFront}\n{vBack}\n')
+        for x in range(6*numVertices*numVertices):
+            if x%3==0:
+                boxFile.write("\nf")
+            boxFile.write(" " + str(x+1))
+
+
 """
 def checkOutOfBounds(newVertexList, oldVertexList, shapeDimension):
     for i in range(len(newVertexList)):

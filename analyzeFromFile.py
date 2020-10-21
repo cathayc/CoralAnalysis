@@ -4,6 +4,14 @@ from coralObject import *
 coralFileList = "D:\Members\Cathy\coralAnalysis\coralFileList.txt"
 coralDataOutputFile = "D:\Members\Cathy\coralAnalysis\output\dataOutput.txt"
 
+# Main method
+def main():
+    # read all coral files and store file name in coralList
+    coralList = []
+    coralList = openAndRead(coralFileList)
+    analyzeAndWrite(coralList, coralDataOutputFile)
+    print("Analysis finished!")
+
 # Given a coral object, determine what to return to the output file
 def obtainCurrentCoralData(fileName, currentCoral):
     if currentCoral==None:
@@ -38,11 +46,5 @@ def analyzeAndWrite(coralList, coralDataOutputFile):
             outputFile.write(obtainCurrentCoralData(fileName, currentCoral))
 
 
-# ----------------------------------------
-#               Main Method
-# ----------------------------------------
-# read all coral files and store file name in coralList
-coralList = []
-coralList = openAndRead(coralFileList)
-analyzeAndWrite(coralList, coralDataOutputFile)
-print("Analysis finished!")
+
+#if __name__ == "__main__":

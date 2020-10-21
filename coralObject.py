@@ -4,6 +4,7 @@ class Coral:
     coralName = ""
     numEdges = 0
     vertexList = []
+    normalList = []
     numVertices = 0
     numFaces = 0
     numHoles = 0
@@ -41,7 +42,7 @@ class Coral:
 
         #First plot online FD
         ax1.set_ylabel(r'$log(N(\epsilon))$')
-        ax1.set_xlabel(r'$log(N( \frac{1}{\epsilon}))$')
+        ax1.set_xlabel(r'$log(\frac{1}{\epsilon})$')
         X1, Y1 = self.onlineXY
         m1, b1 = np.polyfit(X1, Y1, 1)
         ax1.scatter(X1-6, Y1, c = "teal", label = "online FD")
@@ -68,43 +69,6 @@ class Coral:
         
 
 """
-    def plotOnlineXY(self, online=True, file=False):
-        X = Y = []
-        fd = 0
-        figTitle = ""
-        if online:
-            X, Y = self.onlineXY
-            fd = self.onlineFD
-            figTitle =  self.coralName + "online_FD"
-        else:
-            X, Y = self.fileXY
-            fd = self.fileFD
-            figTitle =  self.coralName + "file_FD"
-        fig, ax = plt.subplots(figsize = (8,6))
-        ax.scatter(X, Y, c = "teal", label = "Measured ratios")
-        ax.set_ylabel("$\log N(\epsilon)$")
-        ax.set_xlabel("$\log 1/ \epsilon$")
-        m, b = np.polyfit(X, Y, 1)
-        plt.title(figTitle + str(fd))
-        #plt.plot(np.array(X), m*np.array(X) + b)
-        plt.savefig(figTitle)
-
-    def findFromFDFile(self):
-        X, Y = [], []
-        file = self.jessicaFileName
-        for line in open(file, 'r'):
-            values = [float(s) for s in line.split()]
-            X.append(values[2])
-            Y.append(values[3])
-        m, b = np.polyfit(X, Y, 1)
-        fd = str(round(3-m, 3))
-        print("Jessica's fractal dimension of " + self.coralName + " : " + fd)
-        plt.plot(X, Y, 'o')
-        #plt.plot(X, m*X[0] + b)
-        plt.show()
-        return fd
-        #print(b)
-
     def getVertexList(self):
         if self.vertexList[0][0]=="v":
             trueList = []
