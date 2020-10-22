@@ -133,7 +133,7 @@ def getListCoord(vertex, v):
 	zCoord=float(vertex.lstrip(v).split(' ')[2])
 	return (xCoord, yCoord, zCoord)
 
-def analyzeObject (fileName):
+def analyzeObject (filePath):
 
 	global faceList, edgeList, vertexList
 	global minX, maxX, minY, maxY, minZ, maxZ
@@ -152,12 +152,12 @@ def analyzeObject (fileName):
 
 	# Get file name and handle incorrect/missing file names
 	try:
-		with open(fileName,'r') as file:
+		with open(filePath,'r') as file:
 			text=file.read().splitlines()
-			myCoral = Coral(fileName)
+			myCoral = Coral(filePath)
 			print("Coral file " + myCoral.coralName + " found!")
 	except IOError as e:
-		print(fileName + " not found, please try another file:")
+		print(filePath + " not found, please try another file:")
 		return None
 		
 	# Start timer to analyze performance
@@ -226,12 +226,11 @@ def analyzeObject (fileName):
 	onlineFD, onlineX, onlineY = findOnlineFD(vertexList, myCoral.findBoundBox(), boxDimensions)
 	myCoral.onlineFD = onlineFD
 	myCoral.onlineXY = onlineX, onlineY
-	fileFD, fileX, fileY = findFromFDFile(myCoral.jessicaFileName)
+	fileFD, fileX, fileY = findFromFDFile(myCoral.jessicafilePath)
 	myCoral.fileFD = fileFD
 	myCoral.fileXY = fileX, fileY
 	myCoral.plotBothFD()
 	myCoral.analysisTime = time.time() - start_time
-
 
 #	Some print statements to help with visualizing if writing to document doesn't work
 	print("\n\nThere are " + str(len(vertexList)) + " vertices.")

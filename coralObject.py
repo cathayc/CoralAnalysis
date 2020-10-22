@@ -10,18 +10,18 @@ class Coral:
     numHoles = 0
     surfaceArea = 0
     volume = 0
-    fileName = ""
+    filePath = ""
     analysisTime = 0
     onlineFD = 0
     onlineXY = []
     boxDimensions=[]
-    jessicaFileName = ""
+    jessicafilePath = ""
     fileFD = 0
     fileXY = []
-    def __init__(self, fileName):
-        self.fileName = fileName
-        self.coralName = fileName.split("\\")[-2]
-        self.jessicaFileName = fileName.strip(".obj") + ".txt"
+    def __init__(self, filePath):
+        self.filePath = filePath
+        self.coralName = filePath.split("\\")[-1].strip('.obj')
+        self.jessicafilePath = 'D:\Members\Cathy\JessicaCoralFiles\{}.txt'.format(self.coralName)
     
     def findBoundBox(self):
         [minX, minY, minZ, maxX, maxY, maxZ] = self.boxDimensions

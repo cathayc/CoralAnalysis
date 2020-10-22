@@ -1,3 +1,0 @@
-File Name: | Surface Area (mm^2): | Volume (mm^3): | OnlineFD: | FileFD: | Analysis time (seconds):
-D:\Members\Cathy\Acropora solitaryensis - 2510Acropora solitaryensis - 2510/2510_cut.obj not found, please try another file!
-D:\Members\CathyAcropora solitaryensis - 2510/2510_cut.obj not found, please try another file!

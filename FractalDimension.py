@@ -97,16 +97,11 @@ def convertToNumpyArray(vertexList, shapeDimension):
     vertexArray = filledArray = np.zeros(shape = (shapeDimension))
     for vertex in vertexList:
         vertexArray[vertex]=1
-    
-    # Loop through each slice of the 3D array
-#    for x in range(shapeDimension[0]):
-#        # fill each 2D slice if the slice isn't empty
-#        if not np.all((vertexArray[x]==0)):
-#            filledArray[x] = fillSlice(vertexArray[x])
+
     return vertexArray
 
 def findOnlineFD(vertexList, boundBox, boxDimensions):
-    dilation = 20
+    dilation = 0.2
     shapeDimension = [int(x*dilation)+5 for x in boundBox]
     newVertexList = translateandScaleVertices(vertexList, boxDimensions[0:3], dilation)
     coralModel = convertToNumpyArray(newVertexList, shapeDimension)
@@ -116,8 +111,26 @@ def findOnlineFD(vertexList, boundBox, boxDimensions):
     print("Online fractal dimension: " + str(fd))
     return fd, X, Y
 
-def findFromFDFile(filename):
+
+def findFromFDFile(filePath):
     X, Y = [], []
+    m = 0
+
+    try:
+        with open(filePath, 'r') as file:
+            for line in file:
+                values = [float(s) for s in line.split()]
+                #r=1 is 0.2mm, so convert the radius from 0.2mm to 1m
+                X.append(np.log(values[1]/2))
+                Y.append(values[3])
+            m, b = np.polyfit(X, Y, 1)
+            print("Jessica's fractal dimension of " + filePath.split('\\')[-2] + " : " + str(3-m))
+            return (3-m), X, Y
+    except IOError as e:
+        print(filePath + " not found, please try another file:")
+        return m, [0], [0]
+
+"""
     file = open(filename, 'r')
     for line in file:
         values = [float(s) for s in line.split()]
@@ -128,7 +141,7 @@ def findFromFDFile(filename):
     m, b = np.polyfit(X, Y, 1)
     print("Jessica's fractal dimension of " + filename.split('\\')[-2] + " : " + str(3-m))
     return (3-m), X, Y
-
+"""
 def plot_3D_dataset(vertices):
     X=[]
     Y=[]
