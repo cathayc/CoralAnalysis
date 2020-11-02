@@ -18,7 +18,7 @@ import os
 import numpy as np
 import matplotlib.pyplot as plt
 from coralObject import Coral
-from FractalDimension import findOnlineFD, findFromFDFile
+from FractalDimension import findOnlineFD, findFromFDFile, findMyFD, findBucketFD
 
 faceList=[]
 edgeList=[]
@@ -31,6 +31,11 @@ minY=math.inf
 maxY=-math.inf
 minZ=math.inf
 maxZ=-math.inf
+
+def main():
+	coralSphere = analyzeFD("D:\Members\Cathy\\box\\box.obj")
+	return None
+
 
 #*********************************************************************
 #                               Methods
@@ -133,6 +138,55 @@ def getListCoord(vertex, v):
 	zCoord=float(vertex.lstrip(v).split(' ')[2])
 	return (xCoord, yCoord, zCoord)
 
+def analyzeFD(filePath):
+	global faceList, edgeList, vertexList
+	global minX, maxX, minY, maxY, minZ, maxZ
+
+	faceList.clear()
+	edgeList.clear()
+	vertexList.clear()
+	surfaceArea=0
+	volume=0
+	minX=math.inf
+	maxX=-math.inf
+	minY=math.inf
+	maxY=-math.inf
+	minZ=math.inf
+	maxZ=-math.inf
+
+	# Get file name and handle incorrect/missing file names
+	try:
+		with open(filePath,'r') as file:
+			text=file.read().splitlines()
+			myCoral = Coral(filePath)
+			print("Coral file " + myCoral.coralName + " found!")
+	except IOError as e:
+		print(filePath + " not found, please try another file:")
+		return None
+		
+	# Start timer to analyze performance
+	start_time = time.time()	
+
+	print("Building list of all vertices.")
+	# Build lists of all vertices and faces		
+	for i in range(0, len(text)): 
+		if len(text[i])>1:
+			if text[i][0]=='v' and ' ' == text[i][1]:
+				vertex = getListCoord(text[i], "v ")
+				vertexList.append(vertex)
+				findBoundBox(vertex)
+	myCoral.vertexList = vertexList
+	myCoral.boxDimensions = [minX, minY, minZ, maxX, maxY, maxZ]
+
+	# Calculate fractal dimension
+	myFD, myX, myY = findBucketFD(vertexList, myCoral.findBoundBox())
+	myCoral.myFD = myFD
+	myCoral.myXY = myX, myY
+	
+	myCoral.plotMyFD()
+
+	return myCoral
+
 def analyzeObject (filePath):
 
 	global faceList, edgeList, vertexList
@@ -163,6 +217,7 @@ def analyzeObject (filePath):
 	# Start timer to analyze performance
 	start_time = time.time()	
 
+	print("Building list of all vertices and faces.")
 	# Build lists of all vertices and faces		
 	for i in range(0, len(text)): 
 		if len(text[i])>1:
@@ -171,7 +226,8 @@ def analyzeObject (filePath):
 			elif text[i][0]=='f':
 				faceList.append(text[i])
 	myCoral.vertexList = vertexList
-			
+
+	print("Calculating area and volume.")			
 	for i in range(0, len(faceList)):
 		# Break each face into the label numbers of each vertex
 		vertex1=faceList[i].lstrip('f ').split(' ')[0].split('/')[0]
@@ -222,14 +278,8 @@ def analyzeObject (filePath):
 	myCoral.surfaceArea = surfaceArea
 	myCoral.volume = volume
 
-	# Calculate fractal dimension
-	onlineFD, onlineX, onlineY = findOnlineFD(vertexList, myCoral.findBoundBox(), boxDimensions)
-	myCoral.onlineFD = onlineFD
-	myCoral.onlineXY = onlineX, onlineY
-	fileFD, fileX, fileY = findFromFDFile(myCoral.jessicafilePath)
-	myCoral.fileFD = fileFD
-	myCoral.fileXY = fileX, fileY
-	myCoral.plotBothFD()
+
+	
 	myCoral.analysisTime = time.time() - start_time
 
 #	Some print statements to help with visualizing if writing to document doesn't work
@@ -245,15 +295,34 @@ def analyzeObject (filePath):
 	print ("\nThe bounding box dimensions are {:,.2f}".format(length) + "mm x " + "{:,.2f}".format(width) + "mm x " + "{:,.2f}".format(height) + "mm.")
 	print ("The surface area is {:,.3f}".format(surfaceArea) + " square mm.")
 	print ("The volume is {:,.3f}".format(volume) + " cubic mm.")
-#	print ("The fractal dimension is " + str(onlineFD))
 
 	print ("\n\n--- Elapsed time: {:,.2f}".format(time.time() - start_time) + " seconds ---")
+
+	print("Calculating fractal dimension.")
+
+	# Calculate fractal dimension
+	#myFD, myX, myY = findMyFD(vertexList, myCoral.findBoundBox())
+	#print(myFD)
+	#print(myX)
+	#myCoral.myFD = myFD
+	#myCoral.myXY = myX, myY
+	onlineFD, onlineX, onlineY = findMyFD(vertexList, myCoral.findBoundBox())
+	myCoral.onlineFD = onlineFD
+	myCoral.onlineXY = onlineX, onlineY
+	fileFD, fileX, fileY = findFromFDFile(myCoral.jessicafilePath)
+	myCoral.fileFD = fileFD
+	myCoral.fileXY = fileX, fileY
+	
+	myCoral.plotBothFD()
 
 	return myCoral
 	
 #*********************************************************************
 #								testingMain
 #*********************************************************************
+
+if __name__ == "__main__":
+	main()
 
 #coral2505 = analyzeObject("D:\Members\Cathy\\2505\\2505.obj")
 #coral2505.plotOnlineXY(online = False, file = True)

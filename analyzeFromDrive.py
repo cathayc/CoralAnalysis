@@ -1,7 +1,6 @@
 from pydrive.auth import GoogleAuth
 from pydrive.drive import GoogleDrive
-from analyzeFromFile import obtainCurrentCoralData
-from analyzeObj import analyzeObject
+from analyzeObj import analyzeObject, analyzeFD
 from coralObject import *
 
 import zipfile
@@ -16,8 +15,8 @@ drive = GoogleDrive(gauth)
 coral_file_directory = 'D:\Members\Cathy\coralFiles'
 jessica_file_directory = 'D:\Members\Cathy\JessicaCoralFiles'
 drive_input_id = '14twSsD2RWNGXTXWDJ3i745fA0HbKBfnb'
-drive_output_file_id = '1oDwTqXEKDiiWlN04_goWCWdHzRSr1D96'
-output_filepath = 'D:\Members\Cathy\coralAnalysis\driveOutputData.txt'
+drive_output_file_id = '1-XllZLMZWpSFWqqNAqFtZyvkCp7Axu7e'
+output_filepath = 'D:\Members\Cathy\coralAnalysis\driveOutputDataMYFDONLY.txt'
 output_file_header = "File Name: | Surface Area (mm^2): | Volume (mm^3): | OnlineFD: | FileFD: | Analysis time (seconds):\n"
 
 def main():
@@ -65,7 +64,8 @@ def iterateAndAnalyzeZip(zip_coral_file_path):
             print("Coral file path: {}\n".format(extracted_location))
 
             # Now that the file is extracted, run analysis on the file
-            currentCoral = analyzeObject(extracted_location)
+            print("File is extracted. About to analyze.")
+            currentCoral = analyzeFD(extracted_location)
             print(obtainCurrentCoralData(currentCoral))
             writeAndUploadData(currentCoral, output_filepath, drive_output_file_id)
             
@@ -78,8 +78,11 @@ def writeAndUploadData(currentCoral, output_filepath, drive_output_file_id):
     # Open local file
     with open(output_filepath, 'a') as outputFile:
         if os.path.getsize(output_filepath) == 0:
-            info_to_append = "File Name: | Surface Area (mm^2): | Volume (mm^3): | OnlineFD: | FileFD: | Analysis time (seconds):\n"
-        info_to_append += obtainCurrentCoralData(currentCoral)
+            info_to_append = "File Name: | myFD: | myX: | myY: \n"
+        coralName = currentCoral.coralName
+        myFD = currentCoral.myFD
+        myX, myY = currentCoral.myXY
+        info_to_append += "{} | {} | {} | {}\n".format(coralName, myFD, myX, myY)
 
         # Write to local file first
         outputFile.write(info_to_append)
@@ -216,6 +219,22 @@ def get_size(start_path):
                 total_size += os.path.getsize(fp)
     # Convert from bytes to gigabytes
     return total_size/ 1073741824
+
+def obtainCurrentCoralData(currentCoral):
+    if currentCoral==None:
+        return "File not found, please try another file!\n"
+    else:
+        coralName = currentCoral.coralName
+        sa=currentCoral.surfaceArea
+        volume=currentCoral.volume
+        numVertices = currentCoral.numVertices
+        numEdges = currentCoral.numEdges
+        numFaces = currentCoral.numFaces
+        analysisTime = currentCoral.analysisTime
+        onlineFD = currentCoral.onlineFD
+        fileFD = currentCoral.fileFD
+        [boundingLength, boundingWidth, boundingHeight]=currentCoral.findBoundBox()
+        return str(coralName) + " | " + str(sa) + " | " + str(volume)   + " | " + str(numVertices)   + str(numEdges)   +  " | " + str(numFaces)   + " | " + str(onlineFD) + " | " + str(fileFD) + " | " + str(analysisTime) +"\n"
 
 if __name__ == "__main__":
     #main()
