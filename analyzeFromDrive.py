@@ -7,6 +7,7 @@ import zipfile
 import os
 import shutil
 import winshell
+import time
 
 gauth = GoogleAuth()
 gauth.LoadCredentialsFile("D:\Members\Cathy\mycreds.txt")
@@ -15,11 +16,11 @@ drive = GoogleDrive(gauth)
 coral_file_directory = 'D:\Members\Cathy\coralFiles'
 jessica_file_directory = 'D:\Members\Cathy\JessicaCoralFiles'
 drive_input_id = '14twSsD2RWNGXTXWDJ3i745fA0HbKBfnb'
-drive_output_file_id = '1-XllZLMZWpSFWqqNAqFtZyvkCp7Axu7e'
-output_filepath = 'D:\Members\Cathy\coralAnalysis\driveOutputDataMYFDONLY.txt'
+drive_output_file_id = '1MX6OLn24BxK_-3-OrIF6e8D5pSlFiQcr'
+output_filepath = 'D:\Members\Cathy\coralAnalysis\driveOutputDataMYFD2.txt'
 output_file_header = "File Name: | Surface Area (mm^2): | Volume (mm^3): | OnlineFD: | FileFD: | Analysis time (seconds):\n"
 
-def main():
+def main():	
     # First, download all coral files and execute it on Jessica's program
     downloadAllCoralFiles(drive_input_id, coral_file_directory)
 
@@ -47,8 +48,11 @@ def main():
 
 def iterateAndAnalyzeZip(zip_coral_file_path):
     extracted_location = ""
+    # Start timer to analyze performance
+    
     with zipfile.ZipFile(zip_coral_file_path, 'r') as zip_ref:
         for coral_name in zip_ref.namelist():
+            start_time = time.time()
             filename = os.path.basename(coral_name)
             print("filename: " + filename)
             # skip directories 
@@ -71,6 +75,8 @@ def iterateAndAnalyzeZip(zip_coral_file_path):
             
             # Finally, delete the file
             removeFile(extracted_location)
+            end_time = time.time()
+            print("Analysis time: {}".format(end_time-start_time))
 
 def writeAndUploadData(currentCoral, output_filepath, drive_output_file_id):
     info_to_append = ""

@@ -11,20 +11,20 @@ import matplotlib.animation as animation
 
 
 def main():
-    boxVertexList = createBox(10, 10)
+    #boxVertexList = createBox(100, 100)
     #my_fractal_dimension(boxVertexList, [10, 10, 10])
-    bucket_fractal_dimension(boxVertexList, [10, 10, 10])
+    #fd, X, Y = bucket_fractal_dimension(boxVertexList, [100, 100, 100])
     return None
 
-def bucket_fractal_dimension(array, boxDimensions, n_samples = 30, max_box_size = None, min_box_size = 0):
+def bucket_fractal_dimension(array, boxDimensions, n_samples = 30, max_box_size = None, min_box_size = 0.001):
     print("Doing bucket fractal dimension analysis")
     #determine the scales to measure on
     if max_box_size == None:
         #default max size is the largest power of 2 that fits in the smallest dimension of the array:
-        max_box_size = np.log2(np.min(boxDimensions))/2
+        max_box_size = (np.min(boxDimensions))
         print("Max box size: {} Min box size: {}".format(max_box_size, min_box_size))
-    scales = np.logspace(max_box_size, min_box_size-1, num = n_samples, base =2)
-    scales = scales/5
+    scales = np.geomspace(max_box_size, min_box_size, num = n_samples)
+    scales = scales
     print("scales: {}".format(scales))
 
     X= []
@@ -32,16 +32,14 @@ def bucket_fractal_dimension(array, boxDimensions, n_samples = 30, max_box_size 
 
     print("Number of vertices: {}".format(len(array)))
     
-    for scale in scales:
+    for scale_index in range(len(scales)):
+        scale = scales[scale_index]
         touched=0
         print("Current scale measuring on: {}".format(scale))
         numX = int(boxDimensions[0]/scale+1)
         numY = int(boxDimensions[1]/scale+1)
         numZ = int(boxDimensions[2]/scale+1)
-        #print("Num of boxes: {}".format(numX*numY*numZ))
-        #touchArray = np.zeros((numX, numY, numZ))
-        updatedArray = array
-        #i = 0
+
         myArray = []
         for i in range(len(array)):
             vertex = array[i]
@@ -51,26 +49,15 @@ def bucket_fractal_dimension(array, boxDimensions, n_samples = 30, max_box_size 
             myArray.append((x, y, z))
         touched = len(set(myArray))
 
-        #while len(updatedArray)>0:
-        #    vertex = updatedArray[0]
-        #    x = int(vertex[0]/scale)
-        #    y = int(vertex[1]/scale)
-        #    z = int(vertex[2]/scale)
-            #touchArray[x, y, z] += 1
-            #print("Before: {}".format(len(updatedArray)))
-        #    updatedArray = remove_vertices(x, y, z, scale, updatedArray)
-        #    touched+=1
-            #i+=1
-        #print(i)
-        #print("After: {}".format(len(updatedArray)))
-        
-        #touched = np.count_nonzero(touchArray)
-
         X.append(-np.log(scale/1000))
         Y.append(np.log(touched))
         print("Touched: {}".format(touched))
-    #print("scale: {}\nY: {}".format(X, Y))
-    coeffs = np.polyfit(X, Y,1)
+        if scale_index>3:
+            if Y[scale_index]==Y[scale_index-3]:
+                X = X[:scale_index-3]
+                Y = Y[:scale_index-3]
+                break
+    coeffs = np.polyfit(X, Y, 1)
     fd = coeffs[0]
     print(fd)
     return fd, X, Y
@@ -143,7 +130,8 @@ def vertex_resides_in_box(vertex, x, y, z, scale):
         y*scale <= vertex[1] <= (y+1)*scale and
         z*scale <= vertex[2] <= (z+1)*scale):
         return True
-        
+
+# Code found online; doesn't work        
 def fractal_dimension(array, dilation, max_box_size = None, min_box_size = 1, n_samples = 20, n_offsets = 0):
     """Calculates the fractal dimension of a 3D numpy array.
     
