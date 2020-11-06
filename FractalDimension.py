@@ -11,9 +11,10 @@ import matplotlib.animation as animation
 
 
 def main():
-    #boxVertexList = createBox(100, 100)
+    #boxVertexList = createSolidBox(10, 200)
+    findFromFDFile("D:\Members\Cathy\\box\\solidBox.txt")
     #my_fractal_dimension(boxVertexList, [10, 10, 10])
-    #fd, X, Y = bucket_fractal_dimension(boxVertexList, [100, 100, 100])
+    #fd, X, Y = bucket_fractal_dimension(boxVertexList, [10, 10, 10])
     return None
 
 def bucket_fractal_dimension(array, boxDimensions, n_samples = 30, max_box_size = None, min_box_size = 0.001):
@@ -27,8 +28,8 @@ def bucket_fractal_dimension(array, boxDimensions, n_samples = 30, max_box_size 
     scales = scales
     print("scales: {}".format(scales))
 
-    X= []
-    Y= []
+    X = []
+    Y = []
 
     print("Number of vertices: {}".format(len(array)))
     
@@ -53,9 +54,7 @@ def bucket_fractal_dimension(array, boxDimensions, n_samples = 30, max_box_size 
         Y.append(np.log(touched))
         print("Touched: {}".format(touched))
         if scale_index>3:
-            if Y[scale_index]==Y[scale_index-3]:
-                X = X[:scale_index-3]
-                Y = Y[:scale_index-3]
+            if Y[scale_index]==Y[scale_index-2]:
                 break
     coeffs = np.polyfit(X, Y, 1)
     fd = coeffs[0]
@@ -220,6 +219,7 @@ def convertToNumpyArray(vertexList, shapeDimension):
     return vertexArray
 
 def findOnlineFD(vertexList, boundBox, boxDimensions, sa):
+    print("\nDoing online fractal dimension analysis")
     #find dilation
     numVertices = len(vertexList)
     dilation = numVertices/sa
@@ -235,6 +235,7 @@ def findOnlineFD(vertexList, boundBox, boxDimensions, sa):
     return fd, X, Y
 
 def findFromFDFile(filePath):
+    print("\nFinding Jessica's fractal dimension")
     X, Y = [], []
     m = 0
 
@@ -280,8 +281,28 @@ def plot_3D_numpy_array(array):
     ax.scatter(x, y, z, zdir='z', c= 'red')
     plt.show()
 
-def createBox(length, numVertices):
-    outputFile = "D:\Members\Cathy\\box\\box.obj"
+def createSolidBox(length, numVertices):
+    outputFile = "D:\Members\Cathy\\box\\solidBox.obj"
+    stepSize = length/numVertices
+    vList=[]
+
+    with open(outputFile, 'a') as boxFile:
+        boxFile.truncate(0)
+        boxFile.write('#box created manually\n\n')
+        for i in range(numVertices):
+            for j in range(numVertices):
+                for k in range(numVertices):
+                    vList.append((i*stepSize, j*stepSize, k*stepSize))
+                    v = f'v {i*stepSize} {j*stepSize} {k*stepSize}'
+                    boxFile.write(f'{v}\n')
+        for x in range(numVertices*numVertices*numVertices):
+            if x%3==0:
+                boxFile.write("\nf")
+            boxFile.write(" {}/{}".format(str(x), str(x)))
+        return vList
+
+def createEmptyBox(length, numVertices):
+    outputFile = "D:\Members\Cathy\\box\\emptyBox.obj"
     stepSize = length/numVertices
     vList=[]
 
@@ -312,7 +333,7 @@ def createBox(length, numVertices):
         for x in range(6*numVertices*numVertices):
             if x%3==0:
                 boxFile.write("\nf")
-            boxFile.write(" " + str(x+1))
+            boxFile.write(" {}/{}".format(str(x+1), str(x)))
         return vList
 
 if __name__ == "__main__":

@@ -1,5 +1,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
+
+from FDOutputGraphRevision import singleCoralRevision
+
 class Coral:
     coralName = ""
     numEdges = 0
@@ -30,50 +33,32 @@ class Coral:
         return [maxX-minX, maxY-minY, maxZ-minZ]
 
     def plotMyFD(self):
+        print("Save unrevised coral graph")
         plt.clf()
+        saveFilePath = "D:\Members\Cathy\coralAnalysis\myFDOutputGraphs\\"
         plt.title(self.coralName + "'s my FD: " + str(round(self.myFD, 3)))
         X, Y = self.myXY
-        plt.scatter(X, Y, c="yellow")
+
+        plt.scatter(X, Y, c="green")
         m, b = np.polyfit(X, Y, 1)
         plt.plot(X, m*np.array(X) + b)
-        saveFilePath = "D:\Members\Cathy\coralAnalysis\myFDOutputGraphs\\"
         plt.savefig(saveFilePath + self.coralName)
-    
-    
-    def plotBothFD(self):
+
+    def plotToPlateau(self):
+        X, Y = self.myXY
+        self.myFD = singleCoralRevision(self.coralName, X, Y)
+
+    def plotFileFD(self):
         plt.clf()
-        saveFilePath = "D:\Members\Cathy\coralAnalysis\output\\"
-        fig, (ax1, ax2, ax3) = plt.subplots(3, 1, figsize=(8, 10))
-        # make a little extra space between the subplots
-        fig.subplots_adjust(hspace=0.5)
-
-        #First plot online FD
-        ax1.set_ylabel(r'$log(N(\epsilon))$')
-        ax1.set_xlabel(r'$log(\frac{1}{\epsilon})$')
-        X1, Y1 = self.onlineXY
-        m1, b1 = np.polyfit(X1, Y1, 1)
-        ax1.scatter(X1, Y1, c = "teal", label = "online FD")
-        ax1.set_title(self.coralName + "'s online FD: " + str(round(self.onlineFD, 3)))
-        ax1.plot(X1, m1*np.array(X1) + b1)
-
-        #Then plot file FD
-        ax2.set_ylabel(r'$log(V(r))$')
-        ax2.set_xlabel(r'$log(r)$')
-        X2, Y2 = self.fileXY
-        m2, b2 = np.polyfit(X2, Y2, 1)
-        ax2.scatter(X2, Y2, c = "red", label = "file FD")
-        ax2.set_title(self.coralName + "'s file FD:  " + str(round(self.fileFD, 3)))
-        ax2.plot(X2, m2*np.array(X2) + b2, color="orange")
-
-        #Plot both on the same graph
-        diff = X1[0]-X2[0]
-        ax3.scatter(X1-diff, Y1, c = "teal", label = "online FD")
-        ax3.scatter(X2, Y2, c = "red", label = "file FD")
-        ax3.set_title("both")
-        ax3.plot(X1-diff, m1*np.array(X1) + b1)
-        ax3.plot(X2, m2*np.array(X2) + b2, color="orange")
-        plt.savefig(saveFilePath + self.coralName)
-        
+        saveFilePath = "D:\Members\Cathy\coralAnalysis\\fileFDOutputGraphs\\"
+        X, Y = self.fileXY
+        if len(X) != 0:
+            plt.title(self.coralName + "'s file FD: " + str(round(self.fileFD, 3)))
+            plt.scatter(X, Y, c="green")
+            m, b = np.polyfit(X, Y, 1)
+            plt.plot(X, m*np.array(X) + b)
+            plt.savefig(saveFilePath + self.coralName)
+    
 
 """
     def getVertexList(self):

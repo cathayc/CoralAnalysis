@@ -14,15 +14,23 @@ def main():
     corals = openAndExtract(input_file_path)
     coral_and_fd = []
     for coral in corals:
+        print("\ncoral: {}".format(coral.name))
         x = coral.x
         y = coral.y
-        plateau_point = findPlateauPoint(x, y)
-        print("\ncoral: {}".format(coral.name))
-        fd = plotToPlateau(coral.name, x, y, plateau_point)
+        start_point, plateau_point = findPlateauPoint(x, y)
+        fd = plotToPlateau(coral.name, x, y, start_point, plateau_point)
+        print("my revised fd: {}".format(fd))
+        print("-------------------------------------------------------\n\n\n")
         coral_and_fd.append("{} | {}".format(coral.name, fd))
     
     writeToOutputFile(coral_and_fd, output_file_path)
 
+def singleCoralRevision(name, x, y):
+    start_point, plateau_point = findPlateauPoint(x, y)
+    print("\ncoral: {}".format(name))
+    fd = plotToPlateau(name, x, y, start_point, plateau_point)
+    print("my revised fd: {}".format(fd))
+    return fd
 
 def writeToOutputFile(coral_and_fd, output_file_path):        
     with open(output_file_path, 'a') as outputFile:
@@ -32,25 +40,48 @@ def writeToOutputFile(coral_and_fd, output_file_path):
             print(data)
             outputFile.write(data + "\n")
         
-def plotToPlateau(name, x, y, plateau_point):
+def plotToPlateau(name, x, y, start_point, plateau_point):
     plt.clf()
-    m, b = np.polyfit(x[:plateau_point], y[:plateau_point], 1)
+    print("startPoint: {} endPoint: {}".format(start_point, plateau_point))
+    m, b = np.polyfit(x[start_point:plateau_point], y[start_point:plateau_point], 1)
+
     plt.title("Coral name: {} with FD: {}".format(name, m))
-    plt.scatter(x, y, c="yellow")
+    plt.scatter(x[start_point:plateau_point], y[start_point:plateau_point], c="red")
+    plt.scatter(x[plateau_point:], y[plateau_point:], c="blue")
+    plt.scatter(x[:start_point], y[:start_point], c="blue")
     plt.plot(x, m*np.array(x) + b)
     saveFilePath = "D:\Members\Cathy\coralAnalysis\myFDOutputGraphsRevised\\"
     plt.savefig(saveFilePath + name)
+    #plt.show()
     return m
 
 def findPlateauPoint(x, y):
     slopeList = findSlopeList(x, y)
-    print("slopeList: {}".format(slopeList))
-    for i in range(len(slopeList)-1):
-        slope = slopeList[i+1]
-        if slope < 0.5:
-            print("plateau point: {}".format(i))
-            return i
-    return i
+    avgSlope = (sum(slopeList[3:15])/len(slopeList[3:15]))
+    print("slopeList: {}\nAverage slope: {}".format(slopeList, avgSlope))
+    startPoint = -1
+    plateauPoint = -1
+
+    for i in range(len(slopeList)):
+        slope = slopeList[i]
+        print(slope)
+        #first, find start point
+        if startPoint==-1: 
+            # Start counting if the slope is within 25% of the average slope
+            if abs(slope-avgSlope)/avgSlope < 0.25:
+                startPoint = i
+                print("Start point: {}".format(startPoint))
+        else:
+            if slope < avgSlope*0.6:
+                # Make sure it won't throw index out of range
+                if (i+1<len(slopeList)):
+                    # Make sure that it's actually plateauing
+                    if slopeList[i+1]<avgSlope*0.8:
+                        print("New plateau point. Slope: {} Slope*0.75: {}".format(slope, avgSlope*0.75))
+                        break
+    plateauPoint = i+1
+    print("plateau point: {}".format(plateauPoint))
+    return startPoint, plateauPoint
 
 def findSlopeList(x, y):
     slopeList = []

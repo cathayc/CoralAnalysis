@@ -33,7 +33,7 @@ minZ=math.inf
 maxZ=-math.inf
 
 def main():
-	coralSphere = analyzeFD("D:\Members\Cathy\\box\\box.obj")
+	coralBox = analyzeFD("D:\Members\Cathy\\box\\solidBox.obj")
 	return None
 
 
@@ -145,8 +145,6 @@ def analyzeFD(filePath):
 	faceList.clear()
 	edgeList.clear()
 	vertexList.clear()
-	surfaceArea=0
-	volume=0
 	minX=math.inf
 	maxX=-math.inf
 	minY=math.inf
@@ -184,6 +182,9 @@ def analyzeFD(filePath):
 	myCoral.myXY = myX, myY
 	
 	myCoral.plotMyFD()
+	myCoral.plotToPlateau()
+
+	print(myCoral.myFD)
 
 	return myCoral
 
@@ -277,9 +278,6 @@ def analyzeObject (filePath):
 	myCoral.boxDimensions = boxDimensions
 	myCoral.surfaceArea = surfaceArea
 	myCoral.volume = volume
-
-
-	
 	myCoral.analysisTime = time.time() - start_time
 
 #	Some print statements to help with visualizing if writing to document doesn't work
@@ -300,21 +298,24 @@ def analyzeObject (filePath):
 
 	print("Calculating fractal dimension.")
 
-	# Calculate fractal dimension
-	#myFD, myX, myY = findMyFD(vertexList, myCoral.findBoundBox())
-	#print(myFD)
-	#print(myX)
-	#myCoral.myFD = myFD
-	#myCoral.myXY = myX, myY
-	onlineFD, onlineX, onlineY = findMyFD(vertexList, myCoral.findBoundBox())
-	myCoral.onlineFD = onlineFD
-	myCoral.onlineXY = onlineX, onlineY
+	# Calculate fractal dimension using bucket fractal dimension
+	myFD, myX, myY = findBucketFD(vertexList, myCoral.findBoundBox())
+	myCoral.myFD = myFD
+	myCoral.myXY = myX, myY
+	myCoral.plotMyFD()
+	myCoral.plotToPlateau()
+
+	# Using fractal dimension found online
+	#onlineFD, onlineX, onlineY = findOnlineFD(vertexList, myCoral.findBoundBox(), myCoral.boxDimensions, myCoral.surfaceArea)
+	#myCoral.onlineFD = onlineFD
+	#myCoral.onlineXY = onlineX, onlineY
+
+	# Using Jessica's fractal dimension
 	fileFD, fileX, fileY = findFromFDFile(myCoral.jessicafilePath)
 	myCoral.fileFD = fileFD
 	myCoral.fileXY = fileX, fileY
+	myCoral.plotFileFD()
 	
-	myCoral.plotBothFD()
-
 	return myCoral
 	
 #*********************************************************************

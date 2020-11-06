@@ -17,8 +17,8 @@ coral_file_directory = 'D:\Members\Cathy\coralFiles'
 jessica_file_directory = 'D:\Members\Cathy\JessicaCoralFiles'
 drive_input_id = '14twSsD2RWNGXTXWDJ3i745fA0HbKBfnb'
 drive_output_file_id = '1MX6OLn24BxK_-3-OrIF6e8D5pSlFiQcr'
-output_filepath = 'D:\Members\Cathy\coralAnalysis\driveOutputDataMYFD2.txt'
-output_file_header = "File Name: | Surface Area (mm^2): | Volume (mm^3): | OnlineFD: | FileFD: | Analysis time (seconds):\n"
+output_filepath = 'D:\Members\Cathy\coralAnalysis\driveOutputDataCombined.txt'
+output_file_header = "File Name: | Surface Area (mm^2) | Volume (mm^3) | myFD | OnlineFD | FileFD | numVertices | boundLength | boundWidth | boundHeight | myX | myY\n"
 
 def main():	
     # First, download all coral files and execute it on Jessica's program
@@ -69,7 +69,7 @@ def iterateAndAnalyzeZip(zip_coral_file_path):
 
             # Now that the file is extracted, run analysis on the file
             print("File is extracted. About to analyze.")
-            currentCoral = analyzeFD(extracted_location)
+            currentCoral = analyzeObject(extracted_location)
             print(obtainCurrentCoralData(currentCoral))
             writeAndUploadData(currentCoral, output_filepath, drive_output_file_id)
             
@@ -84,11 +84,17 @@ def writeAndUploadData(currentCoral, output_filepath, drive_output_file_id):
     # Open local file
     with open(output_filepath, 'a') as outputFile:
         if os.path.getsize(output_filepath) == 0:
-            info_to_append = "File Name: | myFD: | myX: | myY: \n"
+            info_to_append = "File Name: | Surface Area (mm^2) | Volume (mm^3) | myFD | OnlineFD | FileFD | numVertices | boundLength | boundWidth | boundHeight | myX | myY\n"
         coralName = currentCoral.coralName
+        sa = currentCoral.surfaceArea
+        vol = currentCoral.volume
         myFD = currentCoral.myFD
+        onlineFD  = currentCoral.onlineFD
+        fileFD =  currentCoral.fileFD
+        numV = currentCoral.numVertices
+        boundLength, boundWidth, boundHeight = currentCoral.findBoundBox()
         myX, myY = currentCoral.myXY
-        info_to_append += "{} | {} | {} | {}\n".format(coralName, myFD, myX, myY)
+        info_to_append += "{} | {} | {} | {} | {} | {} | {} | {} | {} | {} | {} | {}\n".format(coralName, sa, vol, myFD, onlineFD, fileFD, numV, boundLength, boundWidth, boundHeight, myX, myY)
 
         # Write to local file first
         outputFile.write(info_to_append)
