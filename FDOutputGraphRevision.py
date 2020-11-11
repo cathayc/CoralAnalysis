@@ -58,13 +58,13 @@ def plotToPlateau(name, x, y, start_point, plateau_point):
 def findPlateauPoint(x, y):
     slopeList = findSlopeList(x, y)
     avgSlope = (sum(slopeList[3:15])/len(slopeList[3:15]))
-    print("slopeList: {}\nAverage slope: {}".format(slopeList, avgSlope))
+    #print("slopeList: {}\nAverage slope: {}".format(slopeList, avgSlope))
     startPoint = -1
     plateauPoint = -1
 
     for i in range(len(slopeList)):
         slope = slopeList[i]
-        print(slope)
+        #print(slope)
         #first, find start point
         if startPoint==-1: 
             # Start counting if the slope is within 25% of the average slope

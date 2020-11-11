@@ -33,7 +33,7 @@ minZ=math.inf
 maxZ=-math.inf
 
 def main():
-	coralBox = analyzeFD("D:\Members\Cathy\\box\\solidBox.obj")
+	coralBox = analyzeFD("D:\\Members\\Cathy\\2505\\2505.obj")
 	return None
 
 

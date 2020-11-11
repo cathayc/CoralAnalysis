@@ -16,7 +16,7 @@ drive = GoogleDrive(gauth)
 coral_file_directory = 'D:\Members\Cathy\coralFiles'
 jessica_file_directory = 'D:\Members\Cathy\JessicaCoralFiles'
 drive_input_id = '14twSsD2RWNGXTXWDJ3i745fA0HbKBfnb'
-drive_output_file_id = '1MX6OLn24BxK_-3-OrIF6e8D5pSlFiQcr'
+drive_output_file_id = '11ZrwyPtHLqCkfrClcg_46AjS9HLtC3Jw'
 output_filepath = 'D:\Members\Cathy\coralAnalysis\driveOutputDataCombined.txt'
 output_file_header = "File Name: | Surface Area (mm^2) | Volume (mm^3) | myFD | OnlineFD | FileFD | numVertices | boundLength | boundWidth | boundHeight | myX | myY\n"
 
