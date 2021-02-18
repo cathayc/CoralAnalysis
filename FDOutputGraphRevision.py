@@ -1,7 +1,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import math
 
-input_file_path = 'D:\Members\Cathy\coralAnalysis\driveOutputDataMYFD2.txt'
+input_file_path = 'D:\Members\Cathy\coralAnalysis\driveOutputDataMYFD.txt'
 output_file_path = 'D:\Members\Cathy\coralAnalysis\coralAndRevisedFD.txt'
 
 class coral_x_y:  
@@ -50,15 +51,28 @@ def plotToPlateau(name, x, y, start_point, plateau_point):
     plt.scatter(x[plateau_point:], y[plateau_point:], c="blue")
     plt.scatter(x[:start_point], y[:start_point], c="blue")
     plt.plot(x, m*np.array(x) + b)
-    saveFilePath = "D:\Members\Cathy\coralAnalysis\myFDOutputGraphsRevised\\"
+    saveFilePath = "D:\Members\Cathy\coralAnalysis\myFDOutputGraphsRevised2\\"
     plt.savefig(saveFilePath + name)
     #plt.show()
     return m
 
 def findPlateauPoint(x, y):
     slopeList = findSlopeList(x, y)
-    avgSlope = (sum(slopeList[3:15])/len(slopeList[3:15]))
-    #print("slopeList: {}\nAverage slope: {}".format(slopeList, avgSlope))
+    #make sure we only care about the middle ones where slope>0.5 to calculate average slope
+    start = -math.inf
+    end = math.inf
+    for i in range(len(slopeList)-1):
+        if start>-100 and end<100:
+            print("found start: {} end: {}".format(start, end))
+            break
+        if slopeList[i]>0.75 and start<-100:
+            start = i
+        if slopeList[len(slopeList)-i-1]>0.75 and end>100:
+            print(len(slopeList)-i)
+            end = len(slopeList)-i
+    avgSlope = (sum(slopeList[start:end])/len(slopeList[start:end]))
+
+    print("slopeList: {}\nAverage slope: {}".format(slopeList, avgSlope))
     startPoint = -1
     plateauPoint = -1
 
@@ -79,6 +93,8 @@ def findPlateauPoint(x, y):
                     if slopeList[i+1]<avgSlope*0.8:
                         print("New plateau point. Slope: {} Slope*0.75: {}".format(slope, avgSlope*0.75))
                         break
+    if startPoint ==-1:
+        startPoint=0
     plateauPoint = i+1
     print("plateau point: {}".format(plateauPoint))
     return startPoint, plateauPoint

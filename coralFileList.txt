@@ -1,8 +1,0 @@
-D:\Members\Cathy\box\box.obj
-D:\Members\Cathy\sphere\sphere.obj
-D:\Members\Cathy\2512\2512.obj
-randomSHit
-D:\Members\Cathy\2505\2505.obj
-D:\Members\Cathy\1493\1493.obj
-D:\Members\Cathy\1600\1600.obj
-D:\Members\Cathy\1358\1358.obj

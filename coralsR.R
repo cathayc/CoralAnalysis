@@ -4,11 +4,12 @@ library("factoextra")
 library("corrplot")
 library("PerformanceAnalytics")
 library("Hmisc")
-coral_data <- read.csv("D:/Members/Cathy/coralAnalysis/Master Data - Sheet4.csv", header = T)
-coral_data.useful <- coral_data[c(3:10)]
+coral_data <- read.csv("D:/Members/Cathy/coralAnalysis/Master Data - train_cut_combined.csv", header = T)
+coral_data.useful <- coral_data[c(3:9)]
 
 head(coral_data.useful)
 rownames(coral_data.useful) <-   coral_data[,2]
+head(coral_data.useful)
 
 coral_data.useful_stats <- data.frame(
   Min = apply(coral_data.useful, 2, min), # minimum
@@ -29,3 +30,5 @@ corrplot(cor.mat, type="upper", order="hclust",
 chart.Correlation(coral_data.useful, histogram=TRUE, pch=19)
 res.pca <- PCA(coral_data.useful)
 plot(res.pca, choix = "var")
+head(res.pca$var$contrib)
+

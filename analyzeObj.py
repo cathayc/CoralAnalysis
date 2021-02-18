@@ -33,7 +33,8 @@ minZ=math.inf
 maxZ=-math.inf
 
 def main():
-	coralBox = analyzeFD("D:\\Members\\Cathy\\2505\\2505.obj")
+	#coralBox = analyzeFD("D:\\Members\\Cathy\\2505\\2505.obj")
+	#cantorDust = analyzeFD("D:\\Members\\Cathy\\sampleFiles\\solidBox.obj")
 	return None
 
 
@@ -304,6 +305,7 @@ def analyzeObject (filePath):
 	myCoral.myXY = myX, myY
 	myCoral.plotMyFD()
 	myCoral.plotToPlateau()
+	myCoral.writeXYtoFile()
 
 	# Using fractal dimension found online
 	#onlineFD, onlineX, onlineY = findOnlineFD(vertexList, myCoral.findBoundBox(), myCoral.boxDimensions, myCoral.surfaceArea)
@@ -314,7 +316,7 @@ def analyzeObject (filePath):
 	fileFD, fileX, fileY = findFromFDFile(myCoral.jessicafilePath)
 	myCoral.fileFD = fileFD
 	myCoral.fileXY = fileX, fileY
-	myCoral.plotFileFD()
+	#myCoral.plotFileFD()
 	
 	return myCoral
 	

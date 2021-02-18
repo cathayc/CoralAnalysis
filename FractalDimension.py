@@ -11,8 +11,8 @@ import matplotlib.animation as animation
 
 
 def main():
-    #boxVertexList = createSolidBox(10, 200)
-    findFromFDFile("D:\Members\Cathy\\box\\solidBox.txt")
+    boxVertexList = createEmptyBox(10, 200)
+    #findFromFDFile("D:\Members\Cathy\\box\\solidBox.txt")
     #my_fractal_dimension(boxVertexList, [10, 10, 10])
     #fd, X, Y = bucket_fractal_dimension(boxVertexList, [10, 10, 10])
     return None
@@ -53,8 +53,8 @@ def bucket_fractal_dimension(array, boxDimensions, n_samples = 30, max_box_size 
         X.append(-np.log(scale/1000))
         Y.append(np.log(touched))
         print("Touched: {}".format(touched))
-        if scale_index>3:
-            if Y[scale_index]==Y[scale_index-2]:
+        if scale_index>5:
+            if Y[scale_index]==Y[scale_index-5]:
                 break
     coeffs = np.polyfit(X, Y, 1)
     fd = coeffs[0]
@@ -282,7 +282,7 @@ def plot_3D_numpy_array(array):
     plt.show()
 
 def createSolidBox(length, numVertices):
-    outputFile = "D:\Members\Cathy\\box\\solidBox.obj"
+    outputFile = "D:\Members\Cathy\\sampleFiles\\solidBox.obj"
     stepSize = length/numVertices
     vList=[]
 
@@ -302,7 +302,7 @@ def createSolidBox(length, numVertices):
         return vList
 
 def createEmptyBox(length, numVertices):
-    outputFile = "D:\Members\Cathy\\box\\emptyBox.obj"
+    outputFile = "D:\Members\Cathy\\sampleFiles\\emptyBox.obj"
     stepSize = length/numVertices
     vList=[]
 

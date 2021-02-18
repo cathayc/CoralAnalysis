@@ -23,6 +23,7 @@ class Coral:
     fileXY = []
     myFD =0
     myXY = []
+    
     def __init__(self, filePath):
         self.filePath = filePath
         self.coralName = filePath.strip('.obj').split("\\")[-1]
@@ -58,6 +59,26 @@ class Coral:
             m, b = np.polyfit(X, Y, 1)
             plt.plot(X, m*np.array(X) + b)
             plt.savefig(saveFilePath + self.coralName)
+
+    def obtainCoralText(self):
+        coralName = self.coralName
+        sa=self.surfaceArea
+        volume=self.volume
+        numVertices = self.numVertices
+        numEdges = self.numEdges
+        numFaces = self.numFaces
+        fileFD = self.fileFD
+        analysisTime = self.analysisTime
+        [boundingLength, boundingWidth, boundingHeight]=self.findBoundBox()
+        return str(coralName) + " | " + str(sa) + " | " + str(volume)   + " | " + str(numVertices)   + str(numEdges)   +  " | " + str(numFaces)   + " | "  + " | " + str(fileFD) + " | " + str(analysisTime) + "\n"
+
+    def writeXYtoFile(self):
+        file_name = "D:\Members\Cathy\output" + self.coralName
+        f  = open(file_name, "w+")
+        X, Y = self.myXY
+        for i in range(len(X)):
+            print(X)
+            f.write(str(X[i]) + " " + str(Y[i]) + "\n")
     
 
 """
