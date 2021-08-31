@@ -1,3 +1,16 @@
+"""
+This file allows user to analyze from Google Drive by 
+1. Logging into drive with the credential file
+2. Downloading all the files onto the computer with a Zip filee
+3. Iterating through all the files (download one, analyze it, write information on an output file, then delete the original file) with analyzeObj
+4. Uploading the result file onto Drive.
+
+Cathy was primarily working with her directory, D:\Members\Cathy
+Feel free to change that directory to whatever it is that you'd like.
+This file primarily uses DownloadAllCoralFiles, which downloads each individually, runs analysis, upload result, then delete. 
+You can go ahead and disregard DownloadCoralFile. It was used earlier in testing.
+"""
+
 from pydrive.auth import GoogleAuth
 from pydrive.drive import GoogleDrive
 from analyzeObj import analyzeObject, analyzeFD
@@ -15,12 +28,7 @@ gauth = GoogleAuth()
 gauth.LoadCredentialsFile("D:\Members\Cathy\mycreds.txt")
 drive = GoogleDrive(gauth)
 
-#coral_file_directory = 'D:\Members\Cathy\coralFiles'
-#jessica_file_directory = 'D:\Members\Cathy\alreadyCut'
-#drive_input_id = '14twSsD2RWNGXTXWDJ3i745fA0HbKBfnb'
-#output_filepath = 'D:\Members\Cathy\coralAnalysis\driveOutputDataCombined.txt'
 coral_file_directory = 'D:\Members\Cathy\coralFiles'
-jessica_file_directory = 'D:\Members\Cathy\alreadyCut'
 drive_input_id = '14twSsD2RWNGXTXWDJ3i745fA0HbKBfnb'
 output_filepath = 'D:\Members\Cathy\coralAnalysis\driveOutputDataCombined.txt'
 drive_output_file_id = ''
@@ -30,8 +38,15 @@ def main():
     requestInformation()
     #Then, download all coral files in the drive
     downloadAllCoralFiles(drive_input_id, coral_file_directory)
-    #iterateAndAnalyzeZip(new_coral_files)
 
+"""
+    Requesting the information from the user.
+    Information requested:
+        drive_input_id
+        coral_file_directory
+        output_filepath
+        output_filepath (whether user wants to write the result to drivee. If they do, then ask for drive_output_file_id)
+"""
 def requestInformation():
     global coral_file_directory, output_filepath, drive_input_id, drive_output_file_id
     infoRequested = input("Press y if the input is already specified, and n if not: ")
@@ -45,6 +60,52 @@ def requestInformation():
         if writeToDrive == 'n':
             drive_output_file_id = ''
 
+"""
+    Given then coral file directory, each coral file (in file_list), then run the analysis on them. 
+"""
+def downloadAllCoralFiles(drive_id, coral_file_directory):
+    # Get the list of files from shared Coral Model drive
+    file_list = drive.ListFile({'q': "'{}' in parents and trashed=false".format(drive_id)}).GetList()
+
+    for file in file_list:
+        if file['title'].startswith('Copy of'):
+
+            # Download zipped file and obtain file path
+            path_to_zip_file, title, file_already_exists = downloadZipFile(file)
+            
+            # If coral file doesn't already exist in directory, unzip file
+            if file_already_exists:
+                print("Skipping this download and extract.\n")
+            else:
+                with zipfile.ZipFile(path_to_zip_file, 'r') as zip_ref:
+                    # Determine the desired and extract .obj file (lowest resolution)
+                    extractFileName = determineExtractFileName(zip_ref)
+                    filename = os.path.basename(extractFileName)
+                    print("The desired file to extract: " + filename)
+                    # skip directories 
+                    if not filename:
+                        continue
+
+                    # copy file (taken from zipfile's extract)
+                    source = zip_ref.open(extractFileName)
+                    targetpath = os.path.join(coral_file_directory, '{}.obj'.format(title))
+                    target = open(targetpath, "wb")
+                    with source, target:
+                        shutil.copyfileobj(source, target)
+                    
+                    #zip_ref.extract(extractFileName, 'D:\Members\Cathy')
+                    
+                    print("Coral file path: {}\n".format(os.path.abspath(targetpath)))
+
+                    #analyze the coral
+                    analyzeFile(targetpath)
+                    removeFile(targetpath)
+
+                # Now that the file is extracted, delete the zip file.
+                removeFile(path_to_zip_file)
+"""
+    Given a zip file of all coral files, download 1 single coral file. We do this for every single file in the directory.
+"""
 def downloadCoralFile(fileNum):
     extracted_location = ""
     zip_coral_file_path = coral_file_directory+'.zip'
@@ -65,9 +126,12 @@ def downloadCoralFile(fileNum):
                 extracted_location = target.name
                 print("Coral file path: {}\n".format(extracted_location))
 
-                # Now that the file is extracted, run analysis on the file
+                # Show that filee is extracted.
                 print("File is extracted.")
 
+"""
+    Iterate through the coral files in the zip file to run analysis.
+"""
 def iterateAndAnalyzeZip(zip_coral_file_path):
     extracted_location = ""
     
@@ -75,11 +139,11 @@ def iterateAndAnalyzeZip(zip_coral_file_path):
         for coral_name in zip_ref.namelist():
             filename = os.path.basename(coral_name)
             print("filename: " + filename)
-            # skip directories 
+            # Skip directories 
             if not filename:
                 continue
 
-            # copy file (taken from zipfile's extract)
+            # Copy file (taken from zipfile's extract)
             source = zip_ref.open(coral_name)
             target = open(os.path.join('D:\Members\Cathy', coral_name), "wb")
             with source, target:
@@ -91,6 +155,8 @@ def iterateAndAnalyzeZip(zip_coral_file_path):
             print("File is extracted. About to analyze.")
             currentCoral = analyzeObject(extracted_location)
             print(obtainCurrentCoralData(currentCoral))
+
+            # Write the data obtained from running analysis on the coral onto the specified file
             writeAndUploadData(currentCoral)
             
             # Finally, delete the file
@@ -146,46 +212,7 @@ def writeAndUploadData(currentCoral):
     #drive_file.Upload()
 
 
-def downloadAllCoralFiles(drive_id, coral_file_directory):
-    # Get the list of files from shared Coral Model drive
-    file_list = drive.ListFile({'q': "'{}' in parents and trashed=false".format(drive_id)}).GetList()
 
-    for file in file_list:
-        if file['title'].startswith('Copy of'):
-
-            # Download zipped file and obtain file path
-            path_to_zip_file, title, file_already_exists = downloadZipFile(file)
-            
-            # If coral file doesn't already exist in directory, unzip file
-            if file_already_exists:
-                print("Skipping this download and extract.\n")
-            else:
-                with zipfile.ZipFile(path_to_zip_file, 'r') as zip_ref:
-                    # Determine the desired and extract .obj file (lowest resolution)
-                    extractFileName = determineExtractFileName(zip_ref)
-                    filename = os.path.basename(extractFileName)
-                    print("The desired file to extract: " + filename)
-                    # skip directories 
-                    if not filename:
-                        continue
-
-                    # copy file (taken from zipfile's extract)
-                    source = zip_ref.open(extractFileName)
-                    targetpath = os.path.join(coral_file_directory, '{}.obj'.format(title))
-                    target = open(targetpath, "wb")
-                    with source, target:
-                        shutil.copyfileobj(source, target)
-                    
-                    #zip_ref.extract(extractFileName, 'D:\Members\Cathy')
-                    
-                    print("Coral file path: {}\n".format(os.path.abspath(targetpath)))
-
-                    #analyze the coral
-                    analyzeFile(targetpath)
-                    removeFile(targetpath)
-
-                # Now that the file is extracted, delete the zip file
-                removeFile(path_to_zip_file)
 
 def removeFile(path):
     if os.path.exists(path):
@@ -194,8 +221,9 @@ def removeFile(path):
     else:
         print("The file does not exist. File path: " + path)
  
-#   Sometimes there are multiple simplified versions of the coral.
-#   Determine the most simplified .obj file name
+"""
+    Sometimes there are multiple simplified versions of the coral. This method determines the most simplified .obj file name
+"""
 def determineExtractFileName(zip_ref):
     listOfFiles = zip_ref.namelist()
     objFileNames = [fileName for fileName in listOfFiles if fileName.endswith('.obj')]
@@ -232,9 +260,10 @@ def downloadZipFile(file):
     # Return destination of the file
     return destination, title, file_already_exists
 
-
-#   Move all files of a certain extension from current directory to new directory
-#   Usage: move all files run by processOBJ to a new folder
+"""
+   Move all files of a certain extension from current directory to new directory
+   Usage: move all files run by processOBJ to a new folder
+"""
 def moveToDirectory(file_extension, current_directory, new_directory):
     for file in os.listdir(current_directory):
         if not os.path.isfile(current_directory + "\\" +file):
@@ -249,7 +278,9 @@ def moveToDirectory(file_extension, current_directory, new_directory):
                 print("{} moved from {} to {}".format(file, current_directory, new_directory))
                 os.rename(src, dst)
 
-#   Make all files without an extension an .obj file
+"""
+   Sometimes the download isn't all in .obj. Make all files without an extension an .obj file
+"""
 def makeAllObj (current_directory):
     root = current_directory
     for file in os.listdir(current_directory):
@@ -264,32 +295,6 @@ def makeAllObj (current_directory):
 
             if not os.path.exists(dst): # check if the file doesn't exist
                 os.rename(src, dst)
-
-def secondARYmain():	
-    # First, download all coral files and execute it on Jessica's program
-    downloadAllCoralFiles(drive_input_id, coral_file_directory)
-
-    # Wait till user is done with running Jessica's program
-    user_done = "n"
-    while user_done != "y":
-        user_done = input("Done running Jessica's program on every coral? (y/n)")
-    
-    # Move all jessica's file to a new directory
-    print("Going to move all Jessica's file to Jessica's directory: {}".format(jessica_file_directory))
-    moveToDirectory('.txt', coral_file_directory, jessica_file_directory)
-
-    # Zip coral file directory and compare the size change
-    zip_coral_file_path = coral_file_directory+'.zip'
-    if os.path.exists(zip_coral_file_path):
-        print("Zipped coral files already exist at: " + zip_coral_file_path)
-    else:
-        unzippedDirectorySize = get_size(coral_file_directory)
-        shutil.make_archive('..\\coralFiles', 'zip', '..\\coralFiles')
-        zippedDirectorySize = os.stat(zip_coral_file_path).st_size
-        print("Current coral file directory size: {}\nNew coral file directory size: {}\nSpace saved: {:.0%}".format(unzippedDirectorySize, zippedDirectorySize, (unzippedDirectorySize-zippedDirectorySize)/unzippedDirectorySize))
-
-    # Iterate all zipped files and analyze the coral
-    iterateAndAnalyzeZip(zip_coral_file_path)
 
 #   Returns the size of the directory in gigabytes
 def get_size(start_path):

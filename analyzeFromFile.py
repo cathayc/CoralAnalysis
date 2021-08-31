@@ -1,21 +1,25 @@
 from analyzeObj import analyzeObject
 from coralObject import *
-import os
+import os, sys
 
-output_filepath = "D:\Members\Cathy\output\dataOutput.txt"
-coralList = []
-coralfilepath = "D:\Members\Cathy\coralFiles\2510.obj"
+output_filepath = "/Users/cathychang/Desktop/CoralResearch/Outputs/output.txt"
+coral_filepath = ""
+
 
 # Main method
 def main():
+    global coral_filepath
     coral_filepath = input("File path of the coral to be analyzed: ")
-    analyzeFile(coral_filepath)
+    analyzeFile(coral_filepath, output_filepath)
 
-def analyzeFile(filepath):
+def analyzeFile(filepath, output_path):
+    output_filepath = output_path
+    if not checkIfIsFile(coral_filepath, output_filepath):
+        sys.exit()
     currentCoral = analyzeObject(filepath)
     print(obtainCurrentCoralData(currentCoral))
     writeAndUploadData(currentCoral)
-    currentCoral.writeXYtoFile()
+    #currentCoral.writeXYtoFile()
 
 # Given a coral object, determine what to return to the output file
 def obtainCurrentCoralData(currentCoral):
@@ -24,8 +28,18 @@ def obtainCurrentCoralData(currentCoral):
     else:
         return currentCoral.obtainCoralText()
 
+def checkIfIsFile(coral_filepath, output_filepath):
+    if not os.path.isfile(output_filepath):
+        print(output_filepath + " is not a valid filepath. Please enter the correct path.")
+        return False
+    if not os.path.isfile(coral_filepath):
+        print(coral_filepath + " is not a valid filepath. Please enter the correct path.")
+        return False
+    return True
+
 # Analyze and write to file
 def writeAndUploadData(currentCoral):
+    
     info_to_append = ""
 
     # Open local file
@@ -45,6 +59,7 @@ def writeAndUploadData(currentCoral):
         # Write to local file first
         outputFile.write(info_to_append)
         print("Successfully wrote to output file")
+
 
 if __name__ == "__main__":
     main()
