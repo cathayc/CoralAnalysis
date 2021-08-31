@@ -1,3 +1,10 @@
+"""
+    This file defines the coral object. As analysis continues, it will store all the attributes
+    Important notes:
+        jessicafilePath refers to the filepath of the file that's obtained when one runs Jeessica Reichart's 
+            Fractal Dimension Toolbox. Please feel free to change the filepath on line 39.
+"""
+
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -23,42 +30,52 @@ class Coral:
     fileXY = []
     myFD =0
     myXY = []
+    generalFilePath = ""
     
     def __init__(self, filePath):
         self.filePath = filePath
+        self.generalFilePath = filePath.strip('.obj')
         self.coralName = filePath.strip('.obj').split("\\")[-1]
-        self.jessicafilePath = 'D:\Members\Cathy\JessicaCoralFiles\{}.txt'.format(self.coralName)
+        self.coralName = filePath.strip('.obj').split("/")[-1]
+        self.jessicafilePath = '{}.txt'.format(self.generalFilePath)
     
     def findBoundBox(self):
         [minX, minY, minZ, maxX, maxY, maxZ] = self.boxDimensions
         return [maxX-minX, maxY-minY, maxZ-minZ]
 
+    """
+        Plots the fractal dimension slope into a file called "_name of coral_myFD.png"
+    """
     def plotMyFD(self):
         print("Save unrevised coral graph")
         plt.clf()
-        saveFilePath = "D:\Members\Cathy\coralAnalysis\myFDOutputGraphs\\"
         plt.title(self.coralName + "'s my FD: " + str(round(self.myFD, 3)))
         X, Y = self.myXY
 
         plt.scatter(X, Y, c="green")
         m, b = np.polyfit(X, Y, 1)
         plt.plot(X, m*np.array(X) + b)
-        plt.savefig(saveFilePath + self.coralName)
+        plt.savefig(self.generalFilePath + "myFD")
 
+    """
+        Plots the fractal dimension slope, revised to the plateau point, into a file called "_name of coral_myFD.png"
+    """
     def plotToPlateau(self):
         X, Y = self.myXY
-        self.myFD = singleCoralRevision(self.coralName, X, Y)
+        self.myFD = singleCoralRevision(self.coralName, X, Y, self.generalFilePath)
 
+    """
+        Plots the fractal dimension slope obtained by Jessica's file.
+    """
     def plotFileFD(self):
         plt.clf()
-        saveFilePath = "D:\Members\Cathy\coralAnalysis\\fileFDOutputGraphs\\"
         X, Y = self.fileXY
         if len(X) != 0:
             plt.title(self.coralName + "'s file FD: " + str(round(self.fileFD, 3)))
             plt.scatter(X, Y, c="green")
             m, b = np.polyfit(X, Y, 1)
             plt.plot(X, m*np.array(X) + b)
-            plt.savefig(saveFilePath + self.coralName)
+            plt.savefig(self.generalFilePath + "file FD")
 
     def obtainCoralText(self):
         coralName = self.coralName
@@ -79,17 +96,3 @@ class Coral:
         for i in range(len(X)):
             print(X)
             f.write(str(X[i]) + " " + str(Y[i]) + "\n")
-    
-
-"""
-    def getVertexList(self):
-        if self.vertexList[0][0]=="v":
-            trueList = []
-            for vertex in self.vertexList:
-                xCoord=float(vertex.lstrip('v ').split(' ')[0])
-                yCoord=float(vertex.lstrip('v ').split(' ')[1])
-                zCoord=float(vertex.lstrip('v ').split(' ')[2])
-                trueList.append((xCoord, yCoord, zCoord))
-            self.vertexList = trueList
-        return self.vertexList
-"""

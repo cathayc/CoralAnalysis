@@ -1,3 +1,6 @@
+"""
+    This file finds the plateau point of fractal dimension and plots the fractal dimension to plateau point
+"""
 import numpy as np
 import matplotlib.pyplot as plt
 import math
@@ -11,37 +14,16 @@ class coral_x_y:
         self.x = x
         self.y = y
 
-def main():
-    corals = openAndExtract(input_file_path)
-    coral_and_fd = []
-    for coral in corals:
-        print("\ncoral: {}".format(coral.name))
-        x = coral.x
-        y = coral.y
-        start_point, plateau_point = findPlateauPoint(x, y)
-        fd = plotToPlateau(coral.name, x, y, start_point, plateau_point)
-        print("my revised fd: {}".format(fd))
-        print("-------------------------------------------------------\n\n\n")
-        coral_and_fd.append("{} | {}".format(coral.name, fd))
-    
-    writeToOutputFile(coral_and_fd, output_file_path)
 
-def singleCoralRevision(name, x, y):
+def singleCoralRevision(name, x, y, general_file_path):
     start_point, plateau_point = findPlateauPoint(x, y)
     print("\ncoral: {}".format(name))
-    fd = plotToPlateau(name, x, y, start_point, plateau_point)
+    fd = plotToPlateau(name, x, y, start_point, plateau_point, general_file_path)
     print("my revised fd: {}".format(fd))
     return fd
 
-def writeToOutputFile(coral_and_fd, output_file_path):        
-    with open(output_file_path, 'a') as outputFile:
-        outputFile.truncate(0)
-        outputFile.write("Coral Name: | fd: \n")
-        for data in coral_and_fd:
-            print(data)
-            outputFile.write(data + "\n")
         
-def plotToPlateau(name, x, y, start_point, plateau_point):
+def plotToPlateau(name, x, y, start_point, plateau_point, general_file_path):
     plt.clf()
     print("startPoint: {} endPoint: {}".format(start_point, plateau_point))
     m, b = np.polyfit(x[start_point:plateau_point], y[start_point:plateau_point], 1)
@@ -51,8 +33,7 @@ def plotToPlateau(name, x, y, start_point, plateau_point):
     plt.scatter(x[plateau_point:], y[plateau_point:], c="blue")
     plt.scatter(x[:start_point], y[:start_point], c="blue")
     plt.plot(x, m*np.array(x) + b)
-    saveFilePath = "D:\Members\Cathy\coralAnalysis\myFDOutputGraphsRevised2\\"
-    plt.savefig(saveFilePath + name)
+    plt.savefig(general_file_path + "plateau")
     #plt.show()
     return m
 
@@ -72,13 +53,13 @@ def findPlateauPoint(x, y):
             end = len(slopeList)-i
     avgSlope = (sum(slopeList[start:end])/len(slopeList[start:end]))
 
-    print("slopeList: {}\nAverage slope: {}".format(slopeList, avgSlope))
+    print("Average slope: {}".format(avgSlope))
     startPoint = -1
     plateauPoint = -1
 
     for i in range(len(slopeList)):
         slope = slopeList[i]
-        #print(slope)
+
         #first, find start point
         if startPoint==-1: 
             # Start counting if the slope is within 25% of the average slope
@@ -106,25 +87,6 @@ def findSlopeList(x, y):
         slopeList.append(slope)
     return slopeList
 
-def openAndExtract(input_file_path):
-    coralAndData = []
-    try:
-        with open(input_file_path,'r') as file:
-            text = file.read().splitlines()
-            for i in range(len(text)-1):
-                data = text[i+1].split(" | ")
-                x = convertToList(data[2])
-                y = convertToList(data[3])
-                coralAndData.append(coral_x_y(data[0], x, y))
-    except IOError as e:
-        return None
-    return coralAndData
-    
-def convertToList(list):
-    list = list.strip("[").strip("]")
-    list = list.split(", ")
-    list = [float(item) for item in list]
-    return list
 
 def findSlope(pt1, pt2):
     x1, y1 = pt1
