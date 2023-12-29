@@ -3,7 +3,7 @@ Corals are mysterious creatures with highly complex, higher-dimensional structur
 
 Since most objects (e.g. trees, cauliflower, lungs, seashells, coastlines) found in nature are irregular, self-similar, and cannot be easily described by classical geometry, fractal geometry provides a useful perspective to analyze and model natural objects. Additionally, fractal dimension D is both orientation and size invariant, making re-scaling and re-orienting unnecessary. In recent years, the use of fractal dimension D with different calculation methods: Minkowski-Bouligand method, variation, and structure function method. 
 
-This repository focuses on analysis of corals based on Minkowski-Bouligand method. This research is conducted with the (https://www.dipintothereef.com/people.html)[Functional Reef Ecology Lab] in Taiwan, which is headed by (http://www.oc.ntu.edu.tw/oceng/?teacher=vianney-denis)[Professor Vianney Dennis].
+This repository focuses on analysis of corals based on Minkowski-Bouligand method. This research is conducted with the [Functional Reef Ecology Lab](https://www.dipintothereef.com/people.html) in Taiwan, which is headed by (http://www.oc.ntu.edu.tw/oceng/?teacher=vianney-denis)[Professor Vianney Dennis].
 
 # Suggested Walkthrough #
 1. Open up `analyzeFromFile`
