@@ -1,3 +1,9 @@
+# Introduction #
+Corals are mysterious creatures with highly complex, higher-dimensional structures. This project aims to analyze and characterize corals based on their fractal dimension, rather than the community standard of trait-based categorization. Fractal dimension offers a singular continuous variable for capturing the repetitive, fractial-nature, highly irregular corals.
+
+Since most objects (e.g. trees, cauliflower, lungs, seashells, coastlines) found in nature are irregular, self-similar, and cannot be easily described by classical geometry, fractal geometry provides a useful perspective to analyze and model natural objects. Additionally, fractal dimension D is both orientation and size invariant, making re-scaling and re-orienting unnecessary. In recent years, the use of fractal dimension D with different calculation methods: Minkowski-Bouligand method, variation, and structure function method. 
+
+This repository focuses on analysis of corals based on Minkowski-Bouligand method. This research is done with the [https://www.dipintothereef.com/people.html](Functioanl Reef Ecology Lab) in Taiwan headed by Professor Vianney Dennis
 
 # Suggested Walkthrough #
 1. Open up `analyzeFromFile`
