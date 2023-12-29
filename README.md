@@ -5,7 +5,7 @@ Since most objects (e.g. trees, cauliflower, lungs, seashells, coastlines) found
 
 This repository focuses on analysis of corals based on Minkowski-Bouligand method. This study is an individual project conducted in collaboration with [Professor Vianney Dennis](http://www.oc.ntu.edu.tw/oceng/?teacher=vianney-denis) at the [Functional Reef Ecology Lab](https://www.dipintothereef.com/people.html) at Institute of Oceanography, National Taiwan University.
 
-For more in-depth analysis and walkthrough, please visit [Cathy's personal website](https://cathychangclimbshigh.com/personal-projects/fractal-dimension-in-corals/).
+For more in-depth analysis and study walkthrough, please visit [Cathy's personal website](https://cathychangclimbshigh.com/personal-projects/fractal-dimension-in-corals/).
 
 # Suggested Walkthrough #
 1. Open up `analyzeFromFile`
