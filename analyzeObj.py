@@ -317,7 +317,7 @@ def analyzeObject (filePath):
 
 
 	# Using Jessica's fractal dimension
-	fileFD, fileX, fileY = findFromFDFile(myCoral.jessicafilePath)
+	fileFD, fileX, fileY = findFromFDFile(myCoral.toolboxFilePath)
 	myCoral.fileFD = fileFD
 	myCoral.fileXY = fileX, fileY
 	#myCoral.plotFileFD()

@@ -1,7 +1,7 @@
 """
     This file defines the coral object. As analysis continues, it will store all the attributes
     Important notes:
-        jessicafilePath refers to the filepath of the file that's obtained when one runs Jeessica Reichart's 
+        toolboxFilePath refers to the filepath of the file that's obtained when one runs Jeessica Reichart's 
             Fractal Dimension Toolbox. Please feel free to change the filepath on line 39.
 """
 
@@ -25,7 +25,7 @@ class Coral:
     onlineFD = 0
     onlineXY = []
     boxDimensions=[]
-    jessicafilePath = ""
+    toolboxFilePath = ""
     fileFD = 0
     fileXY = []
     myFD =0
@@ -37,7 +37,7 @@ class Coral:
         self.generalFilePath = filePath.strip('.obj')
         self.coralName = filePath.strip('.obj').split("\\")[-1]
         self.coralName = filePath.strip('.obj').split("/")[-1]
-        self.jessicafilePath = '{}.txt'.format(self.generalFilePath)
+        self.toolboxFilePath = '{}.txt'.format(self.generalFilePath)
     
     def findBoundBox(self):
         [minX, minY, minZ, maxX, maxY, maxZ] = self.boxDimensions
