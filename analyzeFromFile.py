@@ -2,8 +2,15 @@ from analyzeObj import analyzeObject
 from coralObject import *
 import os, sys
 
-output_filepath = "/Users/cathychang/Desktop/CoralResearch/Outputs/output.txt"
-coral_filepath = ""
+# Get the current working directory
+current_directory = os.getcwd()
+
+# Construct the output and coral input paths using the current directory
+output_name = "output.txt"
+coral_directory_name = ""
+
+output_filepath = os.path.join(current_directory, "/output/", output_name)
+coral_directory_path = os.path.join(current_directory, "/input/", coral_directory_name)
 
 
 # Main method
