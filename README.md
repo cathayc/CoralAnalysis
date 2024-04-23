@@ -8,6 +8,12 @@ This repository focuses on analysis of corals based on Minkowski-Bouligand metho
 For more in-depth analysis and study walkthrough, please visit [Cathy's personal website](https://cathychangclimbshigh.com/personal-projects/fractal-dimension-in-corals/).
 
 # Suggested Walkthrough #
+## Create and activate your virtual environment ##
+1. Create a virtual environment by running `python3 -m venv .venv`
+2. Activate your virtual environment: `source .venv/bin/activate`
+3. Install the required packages: `pip install -r requirements.txt `
+
+## Test run the analysis file ##
 1. Open up `analyzeFromFile`
 2. Change `output_filepath` on line 5 to `____coral–research-directory____/Outputs/output.txt`
 3. Run `analyzeFromFile`, and input `____coral–research-directory____/CoralFiles/1493.obj`
