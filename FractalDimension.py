@@ -17,7 +17,7 @@ import matplotlib.animation as animation
 
 def main():
     boxVertexList = createEmptyBox(10, 200)
-    #findFromFDFile("D:\Members\Cathy\\box\\solidBox.txt")
+    #findFromReichartFile("D:\Members\Cathy\\box\\solidBox.txt")
     #my_fractal_dimension(boxVertexList, [10, 10, 10])
     #fd, X, Y = bucket_fractal_dimension(boxVertexList, [10, 10, 10])
     return None
@@ -74,7 +74,7 @@ def findBucketFD(vertexList, boxDimensions):
 """
     Find fractal dimension using Reichart's file
 """
-def findFromFDFile(filePath):
+def findFromReichartFile(filePath):
     print("\nFinding Reichart's fractal dimension")
     X, Y = [], []
     m = 0

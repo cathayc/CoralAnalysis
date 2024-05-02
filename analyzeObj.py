@@ -27,7 +27,7 @@ import matplotlib.pyplot as plt
 import plotly.graph_objects as go
 
 from coralObject import Coral
-from FractalDimension import findFromFDFile, findBucketFD
+from FractalDimension import findFromReichartFile, findBucketFD
 
 faceList=[]
 edgeList=[]
@@ -311,7 +311,7 @@ def analyzeObject (filePath):
 
 
 	# Using Reichart's fractal dimension
-	fileFD, fileX, fileY = findFromFDFile(myCoral.toolboxFilePath)
+	fileFD, fileX, fileY = findFromReichartFile(myCoral.toolboxFilePath)
 	myCoral.fileFD = fileFD
 	myCoral.fileXY = fileX, fileY
 	#myCoral.plotFileFD()
