@@ -1,7 +1,3 @@
-# Analyze Scanned Model from Obj File
-# Michael Clougher
-
-
 '''
 A ".obj" file is one way to represent a 3d object - it has all the relevant information needed for 3d computing programs to 
 generate a 3d model including xyz corrdinates of every vertex, the vertex normals, and which three vertices form a face.
@@ -14,7 +10,7 @@ Code written by Michael Clougher:
 Code written by Cathy Chang to integrate everything with FD analysis:
 	getListCoord, analyzeFD, analyzeObject
 
-The most important meethod to be used is analyzeObj, which analyzes the coral object and returns myCoral.
+The most important method to be used is analyzeObj, which analyzes the coral object and returns myCoral.
 Example of how to usee the analyzeObj:
 	coral2505 = analyzeObject("D:\Members\Cathy\\2505\\2505.obj")
 
@@ -28,6 +24,8 @@ import math
 import os
 import numpy as np
 import matplotlib.pyplot as plt
+import plotly.graph_objects as go
+
 from coralObject import Coral
 from FractalDimension import findFromFDFile, findBucketFD
 
@@ -144,9 +142,6 @@ def getListCoord(vertex, v):
 	zCoord=float(vertex.lstrip(v).split(' ')[2])
 	return (xCoord, yCoord, zCoord)
 
-"""
-	This is just for testing.
-"""
 def analyzeFD(filePath):
 	global faceList, edgeList, vertexList
 	global minX, maxX, minY, maxY, minZ, maxZ
@@ -175,7 +170,6 @@ def analyzeFD(filePath):
 	start_time = time.time()	
 
 	print("Building list of all vertices.")
-	# Build lists of all vertices and faces		
 	for i in range(0, len(text)): 
 		if len(text[i])>1:
 			if text[i][0]=='v' and ' ' == text[i][1]:
@@ -190,15 +184,14 @@ def analyzeFD(filePath):
 	myCoral.myFD = myFD
 	myCoral.myXY = myX, myY
 	
-	myCoral.plotMyFD()
-	myCoral.plotToPlateau()
+	myCoral.plotUnrevisedFD()
+	myCoral.plotPlateauFD()
 
 	print(myCoral.myFD)
 
 	return myCoral
 
 def analyzeObject (filePath):
-
 	global faceList, edgeList, vertexList
 	global minX, maxX, minY, maxY, minZ, maxZ
 
@@ -223,7 +216,7 @@ def analyzeObject (filePath):
 	except IOError as e:
 		print(filePath + " not found, please try another file:")
 		return None
-		
+	
 	# Start timer to analyze performance
 	start_time = time.time()	
 
@@ -236,6 +229,18 @@ def analyzeObject (filePath):
 			elif text[i][0]=='f':
 				faceList.append(text[i])
 	myCoral.vertexList = vertexList
+
+	# EXPERIMETN
+	fig = plt.figure()
+	ax = fig.add_subplot(111, projection='3d')
+	x = vertexList[:, 0]
+	y = vertexList[:, 1]
+	z = vertexList[:, 2]
+	ax.set_xlabel('X')
+	ax.set_ylabel('Y')
+	ax.set_zlabel('Z')
+	ax.set_title('3D Mesh Surface')
+	plt.show()
 
 	print("Calculating area and volume.")			
 	for i in range(0, len(faceList)):
@@ -311,9 +316,9 @@ def analyzeObject (filePath):
 	myFD, myX, myY = findBucketFD(vertexList, myCoral.findBoundBox())
 	myCoral.myFD = myFD
 	myCoral.myXY = myX, myY
-	myCoral.plotMyFD()
-	myCoral.plotToPlateau()
-	#myCoral.writeXYtoFile()
+	print(myX)
+	myCoral.plotUnrevisedFD()
+	myCoral.plotPlateauFD()
 
 
 	# Using Jessica's fractal dimension

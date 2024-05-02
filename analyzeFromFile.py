@@ -9,8 +9,8 @@ current_directory = os.getcwd()
 output_name = "output.txt"
 coral_directory_name = ""
 
-output_filepath = os.path.join(current_directory, "/output/", output_name)
-coral_directory_path = os.path.join(current_directory, "/input/", coral_directory_name)
+output_filepath = os.path.join(current_directory, "output", output_name)
+coral_directory_path = os.path.join(current_directory, "input", coral_directory_name)
 
 
 # Main method

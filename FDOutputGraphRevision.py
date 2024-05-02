@@ -18,12 +18,12 @@ class coral_x_y:
 def singleCoralRevision(name, x, y, general_file_path):
     start_point, plateau_point = findPlateauPoint(x, y)
     print("\ncoral: {}".format(name))
-    fd = plotToPlateau(name, x, y, start_point, plateau_point, general_file_path)
+    fd = plotPlateauFD(name, x, y, start_point, plateau_point, general_file_path)
     print("my revised fd: {}".format(fd))
     return fd
 
         
-def plotToPlateau(name, x, y, start_point, plateau_point, general_file_path):
+def plotPlateauFD(name, x, y, start_point, plateau_point, general_file_path):
     plt.clf()
     print("startPoint: {} endPoint: {}".format(start_point, plateau_point))
     m, b = np.polyfit(x[start_point:plateau_point], y[start_point:plateau_point], 1)
