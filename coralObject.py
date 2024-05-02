@@ -73,7 +73,7 @@ class Coral:
         self.myFD = singleCoralRevision(self.coralName, X, Y, self.plateauOutputGraphFilePath)
 
     """
-        Plots the fractal dimension slope obtained by Jessica's group's toolbox file. This doesn't work unless you have the toolboxFilePath populated.
+        Plots the fractal dimension slope obtained by Reichart's group's toolbox file. This doesn't work unless you have the toolboxFilePath populated.
     """
     def plotToolboxFD(self):
         plt.clf()

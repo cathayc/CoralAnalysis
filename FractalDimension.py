@@ -72,10 +72,10 @@ def findBucketFD(vertexList, boxDimensions):
     return fd, X, Y
 
 """
-    Find fractal dimension using Jessica's file
+    Find fractal dimension using Reichart's file
 """
 def findFromFDFile(filePath):
-    print("\nFinding Jessica's fractal dimension")
+    print("\nFinding Reichart's fractal dimension")
     X, Y = [], []
     m = 0
 
@@ -87,7 +87,7 @@ def findFromFDFile(filePath):
                 X.append(np.log(values[1]/2))
                 Y.append(values[3])
             m, b = np.polyfit(X, Y, 1)
-            print("Jessica's fractal dimension of " + filePath.split('\\')[-1].strip(".txt") + " : " + str(3-m))
+            print("Reichart's fractal dimension of " + filePath.split('\\')[-1].strip(".txt") + " : " + str(3-m))
             return (3-m), X, Y
     except IOError as e:
         print(filePath + " not found, please try another file:")

@@ -24,7 +24,6 @@ def analyzeFile(filepath, output_path):
     if not checkIfIsFile(coral_filepath, output_filepath):
         sys.exit()
     currentCoral = analyzeObject(filepath)
-    print(obtainCurrentCoralData(currentCoral))
     writeAndUploadData(currentCoral)
     #currentCoral.writeXYtoFile()
 

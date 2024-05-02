@@ -142,6 +142,7 @@ def getListCoord(vertex, v):
 	zCoord=float(vertex.lstrip(v).split(' ')[2])
 	return (xCoord, yCoord, zCoord)
 
+# Obtain fractal dimension of the object using cube-counting method
 def analyzeFD(filePath):
 	global faceList, edgeList, vertexList
 	global minX, maxX, minY, maxY, minZ, maxZ
@@ -230,18 +231,6 @@ def analyzeObject (filePath):
 				faceList.append(text[i])
 	myCoral.vertexList = vertexList
 
-	# EXPERIMETN
-	fig = plt.figure()
-	ax = fig.add_subplot(111, projection='3d')
-	x = vertexList[:, 0]
-	y = vertexList[:, 1]
-	z = vertexList[:, 2]
-	ax.set_xlabel('X')
-	ax.set_ylabel('Y')
-	ax.set_zlabel('Z')
-	ax.set_title('3D Mesh Surface')
-	plt.show()
-
 	print("Calculating area and volume.")			
 	for i in range(0, len(faceList)):
 		# Break each face into the label numbers of each vertex
@@ -321,7 +310,7 @@ def analyzeObject (filePath):
 	myCoral.plotPlateauFD()
 
 
-	# Using Jessica's fractal dimension
+	# Using Reichart's fractal dimension
 	fileFD, fileX, fileY = findFromFDFile(myCoral.toolboxFilePath)
 	myCoral.fileFD = fileFD
 	myCoral.fileXY = fileX, fileY
