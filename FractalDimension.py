@@ -1,6 +1,6 @@
 """
     The file that finds fractal dimension.
-    Also included in the filee are functions to plot solid boxes and empty boxes.
+    Also included in the file are functions to plot solid boxes and empty boxes.
         createSolidBox
         createEmptyBox
     Of course, you would expect to find the fd to be close to 3 for the solid box and close to 2 for the empty box.
@@ -112,7 +112,6 @@ def plot_3D_dataset(vertices):
     
     # show plot 
     plt.show()
-
 
 def createSolidBox(length, numVertices):
     outputFile = "D:\Members\Cathy\\sampleFiles\\solidBox.obj"

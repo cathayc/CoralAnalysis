@@ -27,7 +27,7 @@ import matplotlib.pyplot as plt
 import plotly.graph_objects as go
 
 from coralObject import Coral
-from FractalDimension import findFromReichartFile, findBucketFD
+from FractalDimension import findFromReichartFile, findBucketFD, plot_3D_dataset
 
 faceList=[]
 edgeList=[]
@@ -142,56 +142,56 @@ def getListCoord(vertex, v):
 	zCoord=float(vertex.lstrip(v).split(' ')[2])
 	return (xCoord, yCoord, zCoord)
 
-# Obtain fractal dimension of the object using cube-counting method
-def analyzeFD(filePath):
-	global faceList, edgeList, vertexList
-	global minX, maxX, minY, maxY, minZ, maxZ
+# Removes the duplicate edges on the edgeList
+def removeDuplicateEdges(edgeList):
+	edgeList.sort()
+	edgeList=list(edgeList for edgeList,_ in itertools.groupby(edgeList))
+	return edgeList
 
-	faceList.clear()
-	edgeList.clear()
-	vertexList.clear()
-	minX=math.inf
-	maxX=-math.inf
-	minY=math.inf
-	maxY=-math.inf
-	minZ=math.inf
-	maxZ=-math.inf
-
-	# Get file name and handle incorrect/missing file names
-	try:
-		with open(filePath,'r') as file:
-			text=file.read().splitlines()
-			myCoral = Coral(filePath)
-			print("Coral file " + myCoral.coralName + " found!")
-	except IOError as e:
-		print(filePath + " not found, please try another file:")
-		return None
-		
-	# Start timer to analyze performance
-	start_time = time.time()	
-
-	print("Building list of all vertices.")
-	for i in range(0, len(text)): 
+# Builds the vertextList and faceList from the obj file
+def buildVertexFaceList(text, vertexList, faceList):
+	for i in range(0, len(text)):
 		if len(text[i])>1:
 			if text[i][0]=='v' and ' ' == text[i][1]:
-				vertex = getListCoord(text[i], "v ")
-				vertexList.append(vertex)
-				findBoundBox(vertex)
-	myCoral.vertexList = vertexList
-	myCoral.boxDimensions = [minX, minY, minZ, maxX, maxY, maxZ]
+				vertexList.append(getListCoord(text[i], "v "))
+			elif text[i][0]=='f':
+				faceList.append(text[i])
+	return vertexList, faceList
 
-	# Calculate fractal dimension
-	myFD, myX, myY = findBucketFD(vertexList, myCoral.findBoundBox())
-	myCoral.myFD = myFD
-	myCoral.myXY = myX, myY
-	
-	myCoral.plotUnrevisedFD()
-	myCoral.plotPlateauFD()
+# Find the area and volume using faceList and edgeList
+def findAreaVolume(faceList, edgeList):
+	surfaceArea = 0
+	volume = 0
+	for i in range(0, len(faceList)):
+		# Break each face into the label numbers of each vertex
+		vertex1=faceList[i].lstrip('f ').split(' ')[0].split('/')[0]
+		vertex2=faceList[i].lstrip('f ').split(' ')[1].split('/')[0]
+		vertex3=faceList[i].lstrip('f ').split(' ')[2].split('/')[0]
+		
+		# Surface area calculated by summing area of each triangular face
+		surfaceArea+=triArea(vertex1,vertex2,vertex3)
+		
+		# Volume calculated by the sum of signed volumes of tetrahedrons. Each tetrahedron is formed by the three vertices of a face on the object; the fourth point is the origin
+		volume+=findtetraVolume(vertex1,vertex2,vertex3)
 
-	print(myCoral.myFD)
+		#We define each edge as a list of two vertices and sort so that duplicates can easily be deleted later
+		edge1=sorted([vertex1, vertex2])
+		edge2=sorted([vertex2, vertex3])
+		edge3=sorted([vertex3, vertex1])
+		
+		# Add each edge to an edgeList
+		edgeList.append(edge1)
+		edgeList.append(edge3)
+		edgeList.append(edge2)
+	return surfaceArea, volume
 
-	return myCoral
+# Find the number of holes in the obj file
+def findNumHoles(vertexList, edgeList, faceList):
+	# use Euler's Formula
+	holes=int(-(len(vertexList)-len(edgeList)+len(faceList))/2+1)
+	return holes
 
+# Run through and find all attributes of the obj file (volume, surfaceArea, fractal dimension, etc)	
 def analyzeObject (filePath):
 	global faceList, edgeList, vertexList
 	global minX, maxX, minY, maxY, minZ, maxZ
@@ -221,46 +221,20 @@ def analyzeObject (filePath):
 	# Start timer to analyze performance
 	start_time = time.time()	
 
+	# Build lists of all vertices and faces
 	print("Building list of all vertices and faces.")
-	# Build lists of all vertices and faces		
-	for i in range(0, len(text)): 
-		if len(text[i])>1:
-			if text[i][0]=='v' and ' ' == text[i][1]:
-				vertexList.append(getListCoord(text[i], "v "))
-			elif text[i][0]=='f':
-				faceList.append(text[i])
-	myCoral.vertexList = vertexList
+	myCoral.vertexList, myCoral.faceList = buildVertexFaceList(text, vertexList, faceList)
 
-	print("Calculating area and volume.")			
-	for i in range(0, len(faceList)):
-		# Break each face into the label numbers of each vertex
-		vertex1=faceList[i].lstrip('f ').split(' ')[0].split('/')[0]
-		vertex2=faceList[i].lstrip('f ').split(' ')[1].split('/')[0]
-		vertex3=faceList[i].lstrip('f ').split(' ')[2].split('/')[0]
-		
-		# Surface area calculated by summing area of each triangular face
-		surfaceArea+=triArea(vertex1,vertex2,vertex3)
-		
-		
-		# Volume calculated by the sum of signed volumes of tetrahedrons. Each tetrahedron is formed by the three vertices of a face on the object; the fourth point is the origin
-		volume+=findtetraVolume(vertex1,vertex2,vertex3)
-
-		#We define each edge as a list of two vertices and sort so that duplicates can easily be deleted later
-		edge1=sorted([vertex1, vertex2])
-		edge2=sorted([vertex2, vertex3])
-		edge3=sorted([vertex3, vertex1])
-		
-		# Add each edge to an edgeList
-		edgeList.append(edge1)
-		edgeList.append(edge3)
-		edgeList.append(edge2)
+	# Calculate area and volume
+	print("Calculating area and volume")
+	surfaceArea, volume = findAreaVolume(faceList, edgeList)
 			
 	#Remove duplicates of edges
-	edgeList.sort()
-	edgeList=list(edgeList for edgeList,_ in itertools.groupby(edgeList))
+	print("Removing duplicate edges")
+	edgeList = removeDuplicateEdges(edgeList)
 
-	#Euler's Formula
-	holes=int(-(len(vertexList)-len(edgeList)+len(faceList))/2+1)
+	# Find num holes
+	holes = findNumHoles(vertexList, edgeList, faceList)
 
 	# Bounding Box distances
 	length=abs(maxX-minX)
@@ -269,12 +243,7 @@ def analyzeObject (filePath):
 	boxDimensions = [minX, minY, minZ, maxX, maxY, maxZ]
 
 	# Set coral object attributes
-	if holes==1:
-		myCoral.numHoles = 1
-	elif holes==0:
-		myCoral.numHoles = 0
-	else:
-		myCoral.numHoles = holes
+	myCoral.numHoles = holes
 	myCoral.numEdges = len(edgeList)
 	myCoral.numVertices = len(vertexList)
 	myCoral.numFaces = len(faceList)
@@ -287,34 +256,41 @@ def analyzeObject (filePath):
 	print("\n\nThere are " + str(len(vertexList)) + " vertices.")
 	print("There are " + str(len(edgeList)) + " edges.")
 	print("There are " + str(len(faceList)) + " faces.")
-	if holes==1:
-		print("There is one hole in the object.")
-	elif holes==0:
-		print("There are no holes in the object.")
-	else:
-		print("There are " + str(holes) + " holes in the object.")
+	print("There are " + str(holes) + " holes in the object.")
 	print ("\nThe bounding box dimensions are {:,.2f}".format(length) + "mm x " + "{:,.2f}".format(width) + "mm x " + "{:,.2f}".format(height) + "mm.")
 	print ("The surface area is {:,.3f}".format(surfaceArea) + " square mm.")
 	print ("The volume is {:,.3f}".format(volume) + " cubic mm.")
 
 	print ("\n\n--- Elapsed time: {:,.2f}".format(time.time() - start_time) + " seconds ---")
 
+	# Pop up the 3D file
+	print("Printing the 3D file")
+	plot_3D_dataset(vertexList)
+
 	print("Calculating fractal dimension.")
 
 	# Calculate fractal dimension using bucket fractal dimension
-	myFD, myX, myY = findBucketFD(vertexList, myCoral.findBoundBox())
-	myCoral.myFD = myFD
-	myCoral.myXY = myX, myY
-	print(myX)
+	bucketFD, bucketX, bucketY = findBucketFD(vertexList, myCoral.findBoundBox())
+
+	# Set coral attributes
+	myCoral.bucketFD = bucketFD
+	myCoral.bucketXY = bucketX, bucketY
+
+	# Print statements
+	print("Bucket FD: {}".format(bucketFD))
+
+	# Plotting the FD
 	myCoral.plotUnrevisedFD()
 	myCoral.plotPlateauFD()
 
 
 	# Using Reichart's fractal dimension
-	fileFD, fileX, fileY = findFromReichartFile(myCoral.toolboxFilePath)
-	myCoral.fileFD = fileFD
-	myCoral.fileXY = fileX, fileY
-	#myCoral.plotFileFD()
+	reichartFD, reichartX, reichartY = findFromReichartFile(myCoral.reichartFilePath)
+	myCoral.reichartFD = reichartFD
+	myCoral.reichartXY = reichartX, reichartY
+	print("Reichart FD: {}".format(reichartFD))
+
+	myCoral.plotReichartFD()
 	
 	return myCoral
 	
@@ -323,4 +299,4 @@ def analyzeObject (filePath):
 #*********************************************************************
 
 if __name__ == "__main__":
-	main()
+	analyzeObject("/Users/cathychang/Desktop/Projects/CoralAnalysis/input/1029.obj")

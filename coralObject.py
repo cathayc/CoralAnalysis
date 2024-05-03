@@ -1,7 +1,7 @@
 """
     This file defines the coral object. As analysis continues, it will store all the attributes
     Important notes:
-        toolboxFilePath refers to the filepath of the file that's obtained when one runs Jeessica Reichart's 
+        reichartFilePath refers to the filepath of the file that's obtained when one runs Jeessica Reichart's 
             Fractal Dimension Toolbox. Please feel free to change the filepath on line 39.
 """
 
@@ -28,11 +28,11 @@ class Coral:
     onlineFD = 0
     onlineXY = []
     boxDimensions=[]
-    toolboxFilePath = ""
-    fileFD = 0
-    fileXY = []
-    myFD =0
-    myXY = []
+    reichartFilePath = ""
+    reichartFD = 0
+    reichartXY = []
+    bucketFD =0
+    bucketXY = []
     outputGraphFilePath = ""
     
     def __init__(self, filePath):
@@ -42,7 +42,7 @@ class Coral:
         self.unrevisedOutputGraphFilePath = os.path.join(current_directory, "output", "unrevised", self.coralName)
         self.plateauOutputGraphFilePath = os.path.join(current_directory, "output", "plateau", self.coralName)
         self.toolboxOutputGraphFilePath = os.path.join(current_directory, "output", "toolbox", self.coralName)
-        self.toolboxFilePath = '{}.txt'.format(self.outputGraphFilePath)
+        self.reichartFilePath = '{}.txt'.format(self.outputGraphFilePath)
     
     """
         Finds the bounding box of the coral
@@ -52,38 +52,38 @@ class Coral:
         return [maxX-minX, maxY-minY, maxZ-minZ]
 
     """
-        Plots the fractal dimension slope into a file called "_name of coral_myFD.png"
+        Plots the fractal dimension slope into a file called "_name of coral_bucketFD.png"
     """
     def plotUnrevisedFD(self):
         print("Save unrevised coral graph")
         plt.clf()
-        plt.title(self.coralName + "'s my FD: " + str(round(self.myFD, 3)))
-        X, Y = self.myXY
+        plt.title(self.coralName + "'s my FD: " + str(round(self.bucketFD, 3)))
+        X, Y = self.bucketXY
 
         plt.scatter(X, Y, c="green")
         m, b = np.polyfit(X, Y, 1)
         plt.plot(X, m*np.array(X) + b)
-        plt.savefig(self.unrevisedOutputGraphFilePath + "myFD")
+        plt.savefig(self.unrevisedOutputGraphFilePath + "bucketFD")
 
     """
-        Plots the fractal dimension slope, revised to the plateau point, into a file called "_name of coral_myFD.png"
+        Plots the fractal dimension slope, revised to the plateau point, into a file called "_name of coral_bucketFD.png"
     """
     def plotPlateauFD(self):
-        X, Y = self.myXY
-        self.myFD = singleCoralRevision(self.coralName, X, Y, self.plateauOutputGraphFilePath)
+        X, Y = self.bucketXY
+        self.bucketFD = singleCoralRevision(self.coralName, X, Y, self.plateauOutputGraphFilePath)
 
     """
-        Plots the fractal dimension slope obtained by Reichart's group's toolbox file. This doesn't work unless you have the toolboxFilePath populated.
+        Plots the fractal dimension slope obtained by Reichart's group's toolbox file. This doesn't work unless you have the reichartFilePath populated.
     """
-    def plotToolboxFD(self):
+    def plotReichartFD(self):
         plt.clf()
-        X, Y = self.fileXY
+        X, Y = self.reichartXY
         if len(X) != 0:
-            plt.title(self.coralName + "'s file FD: " + str(round(self.fileFD, 3)))
+            plt.title(self.coralName + "'s file FD: " + str(round(self.reichartFD, 3)))
             plt.scatter(X, Y, c="green")
             m, b = np.polyfit(X, Y, 1)
             plt.plot(X, m*np.array(X) + b)
-            plt.savefig(self.toolboxOutputGraphFilePath + "file FD")
+            plt.savefig(self.toolboxOutputGraphFilePath + "reichartFD")
         
     """
         Returns everything that defines the coral (height, width, length, bounding box, etc.)
@@ -95,7 +95,7 @@ class Coral:
         numVertices = self.numVertices
         numEdges = self.numEdges
         numFaces = self.numFaces
-        fileFD = self.fileFD
+        reichartFD = self.reichartFD
         analysisTime = self.analysisTime
         [boundingLength, boundingWidth, boundingHeight]=self.findBoundBox()
-        return str(coralName) + " | " + str(sa) + " | " + str(volume)   + " | " + str(numVertices)   + str(numEdges)   +  " | " + str(numFaces)   + " | "  + " | " + str(fileFD) + " | " + str(analysisTime) + "\n"
+        return str(coralName) + " | " + str(sa) + " | " + str(volume)   + " | " + str(numVertices)   + str(numEdges)   +  " | " + str(numFaces)   + " | "  + " | " + str(reichartFD) + " | " + str(analysisTime) + "\n"
