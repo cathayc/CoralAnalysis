@@ -8,15 +8,16 @@
     You will also find methods that plot the 3d object given vertices
 """
 
+import os
 import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.animation as animation
 
-
+current_directory = os.getcwd()
 
 def main():
-    boxVertexList = createEmptyBox(10, 200)
+    boxVertexList = createSolidBox(10, 200)
     #findFromReichartFile("D:\Members\Cathy\\box\\solidBox.txt")
     #my_fractal_dimension(boxVertexList, [10, 10, 10])
     #fd, X, Y = bucket_fractal_dimension(boxVertexList, [10, 10, 10])
@@ -65,15 +66,13 @@ def bucket_fractal_dimension(array, boxDimensions, n_samples = 30, max_box_size 
     print("Fractal dimension: {}".format(fd))
     return fd, X, Y
 
-
+# Find fractal dimension using the box counting method
 def findBucketFD(vertexList, boxDimensions):
     fd, X, Y = bucket_fractal_dimension(vertexList, boxDimensions)
     print("My fractal dimension: " + str(fd))
     return fd, X, Y
 
-"""
-    Find fractal dimension using Reichart's file
-"""
+# Find fractal dimension using Reichart's file
 def findFromReichartFile(filePath):
     print("\nFinding Reichart's fractal dimension")
     X, Y = [], []
@@ -114,7 +113,7 @@ def plot_3D_dataset(vertices):
     plt.show()
 
 def createSolidBox(length, numVertices):
-    outputFile = "D:\Members\Cathy\\sampleFiles\\solidBox.obj"
+    outputFile = os.path.join(current_directory, "output", "solidBox")
     stepSize = length/numVertices
     vList=[]
 
@@ -133,8 +132,8 @@ def createSolidBox(length, numVertices):
             boxFile.write(" {}/{}".format(str(x), str(x)))
         return vList
 
-def createEmptyBox(length, numVertices):
-    outputFile = "D:\Members\Cathy\\sampleFiles\\emptyBox.obj"
+def createShellBox(length, numVertices):
+    outputFile = os.path.join(current_directory, "output", "shellBox")
     stepSize = length/numVertices
     vList=[]
 

@@ -45,7 +45,6 @@ def checkIfIsFile(coral_filepath, output_filepath):
 
 # Analyze and write to file
 def writeAndUploadData(currentCoral):
-    
     info_to_append = ""
 
     # Open local file
