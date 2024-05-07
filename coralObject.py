@@ -11,7 +11,7 @@ import os
 import math
 import time
 
-from analyzeObj import buildVertexFaceList, findAreaVolume, removeDuplicateEdges, findNumHoles, findMinMaxCoord
+from analysisHelpers import buildVertexFaceList, findAreaVolume, removeDuplicateEdges, findNumHoles, findMinMaxCoord
 from FractalDimension import plot_3D_dataset, findBucketFD, findFromReichartFile
 from FDOutputGraphRevision import singleCoralRevision
 
@@ -191,7 +191,6 @@ class Coral:
         # Plotting the FD
         self.plotUnrevisedFD()
         self.plotPlateauFD()
-
 
         # Using Reichart's fractal dimension
         reichartFD, reichartX, reichartY = findFromReichartFile(self.reichartFilePath)

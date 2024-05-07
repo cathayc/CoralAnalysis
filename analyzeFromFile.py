@@ -1,4 +1,4 @@
-from analyzeObj import analyzeObject
+from analysisHelpers import analyzeObject
 from coralObject import *
 import os, sys
 
