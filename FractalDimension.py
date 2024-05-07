@@ -14,18 +14,23 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.animation as animation
 
+# from coralObject import Coral
+
 current_directory = os.getcwd()
 
 def main():
-    boxVertexList = createSolidBox(10, 200)
-    #findFromReichartFile("D:\Members\Cathy\\box\\solidBox.txt")
-    #my_fractal_dimension(boxVertexList, [10, 10, 10])
-    #fd, X, Y = bucket_fractal_dimension(boxVertexList, [10, 10, 10])
+    # Create only if you don't already have the solid and shell vertices
+    solidVertexList = createSolidBox(10, 200)
+    # shellVertexList = createShellBox(10, 200)
+    # findFromReichartFile("D:\Members\Cathy\\box\\solidBox.txt")
+    myCoral = Coral("/Users/cathychang/Desktop/Projects/CoralAnalysis/input/shellBox.obj")
+    fd, X, Y = myCoral.bucketFD()
     return None
 
+# Doing bucket fractal dimension. We can change the number of samples here
 def bucket_fractal_dimension(array, boxDimensions, n_samples = 30, max_box_size = None, min_box_size = 0.001):
     print("Doing bucket fractal dimension analysis. ")
-    #determine the scales to measure on
+    # determine the scales to measure on
     if max_box_size == None:
         #default max size is the largest power of 2 that fits in the smallest dimension of the array:
         max_box_size = (np.min(boxDimensions))
@@ -68,6 +73,7 @@ def bucket_fractal_dimension(array, boxDimensions, n_samples = 30, max_box_size 
 
 # Find fractal dimension using the box counting method
 def findBucketFD(vertexList, boxDimensions):
+    print("BOX DIMENSIONS: {}".format(boxDimensions))
     fd, X, Y = bucket_fractal_dimension(vertexList, boxDimensions)
     print("My fractal dimension: " + str(fd))
     return fd, X, Y
@@ -112,8 +118,9 @@ def plot_3D_dataset(vertices):
     # show plot 
     plt.show()
 
+# Create a solid box in the input directory
 def createSolidBox(length, numVertices):
-    outputFile = os.path.join(current_directory, "output", "solidBox")
+    outputFile = os.path.join(current_directory, "input", "solidBox.obj")
     stepSize = length/numVertices
     vList=[]
 
@@ -133,7 +140,7 @@ def createSolidBox(length, numVertices):
         return vList
 
 def createShellBox(length, numVertices):
-    outputFile = os.path.join(current_directory, "output", "shellBox")
+    outputFile = os.path.join(current_directory, "input", "shellBox.obj")
     stepSize = length/numVertices
     vList=[]
 
@@ -168,4 +175,5 @@ def createShellBox(length, numVertices):
         return vList
 
 if __name__ == "__main__":
-    main()
+    # main()
+    print("hi")

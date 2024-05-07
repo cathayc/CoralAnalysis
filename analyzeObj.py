@@ -26,7 +26,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import plotly.graph_objects as go
 
-from coralObject import Coral
+# from coralObject import Coral
 from FractalDimension import findFromReichartFile, findBucketFD, plot_3D_dataset
 
 faceList=[]
@@ -46,11 +46,10 @@ maxZ=-math.inf
 #*********************************************************************
 
 # Find volume of a triangle given three vertex label numbers 
-def triArea(u,v,w):
-
-	x1, y1, z1 = getVertexCoord(u)
-	x2, y2, z2 = getVertexCoord(v)
-	x3, y3, z3 = getVertexCoord(w)
+def triArea(u,v,w, vertexList):
+	x1, y1, z1 = getVertexCoord(u, vertexList)
+	x2, y2, z2 = getVertexCoord(v, vertexList)
+	x3, y3, z3 = getVertexCoord(w, vertexList)
 
 	a=dist(x1,y1,z1,x2,y2,z2)
 	b=dist(x2,y2,z2,x3,y3,z3)
@@ -62,13 +61,12 @@ def triArea(u,v,w):
 	return area
 
 # Returns the X, Y, and Z coordinates of a vertex given its label number
-def getVertexCoord(vert):
+def getVertexCoord(vert, vertexList):
 	#xCoord=float(vertexList[int(vert)-1].lstrip('v ').split(' ')[0])
 	#yCoord=float(vertexList[int(vert)-1].lstrip('v ').split(' ')[1])
 	#zCoord=float(vertexList[int(vert)-1].lstrip('v ').split(' ')[2])
 	coord = vertexList[int(vert)-1]
 	return coord
-	#return(xCoord,yCoord,zCoord)
 	
 # Calculate Euclidean distance	
 def dist(a,b,c,d,e,f): 
@@ -76,11 +74,10 @@ def dist(a,b,c,d,e,f):
 	return distance
 	
 # Find volume of a tetrahedron given three vertex label numbers, (fourth point is the origin)
-def findtetraVolume(u,v,w):
-	
-	x1, y1, z1 = getVertexCoord(u)
-	x2, y2, z2 = getVertexCoord(v)
-	x3, y3, z3 = getVertexCoord(w)
+def findtetraVolume(u,v,w, vertexList):
+	x1, y1, z1 = getVertexCoord(u, vertexList)
+	x2, y2, z2 = getVertexCoord(v, vertexList)
+	x3, y3, z3 = getVertexCoord(w, vertexList)
 
 	# Create vertices given their coordinates
 	u1=[x1,y1,z1]
@@ -88,15 +85,39 @@ def findtetraVolume(u,v,w):
 	w1=[x3,y3,z3]
 
 	# While we are already looking through each coordinate find the min/max values for X/Y/Z
-	findBoundBox(u1)
-	findBoundBox(v1)
-	findBoundBox(w1)
+	findBoundBox(u1, minX, maxX, minY, maxY, minZ, maxZ)
+	(v1, minX, maxX, minY, maxY, minZ, maxZ)
+	findBoundBox(w1, minX, maxX, minY, maxY, minZ, maxZ)
 	
 	crossProduct=cross(v1,w1)
 	dotProduct=dot(u1,crossProduct)
 	tetraVolume=dotProduct/6
 
 	return tetraVolume
+
+def findMinMaxCoord(faceList):
+	minX=math.inf
+	maxX=-math.inf
+	minY=math.inf
+	maxY=-math.inf
+	minZ=math.inf
+	maxZ=-math.inf
+	for vert in faceList:
+		# print(vert[0])
+		if(vert[0]<minX):
+			minX=vert[0]
+		if(vert[0]>maxX):
+			maxX=vert[0]
+		if(vert[1]<minY):
+			minY=vert[1]
+		if(vert[1]>maxY):
+			maxY=vert[1]
+		if(vert[2]<minZ):
+			minZ=vert[2]
+		if(vert[2]>maxZ):
+			maxZ=vert[2]
+	print(minX, maxX, minY, maxY, minZ, maxZ)
+	return minX, maxX, minY, maxY, minZ, maxZ
 	
 # Compute cross product given vertices 'a' and 'b'	
 def cross(a, b):
@@ -111,25 +132,15 @@ def dot(a, b):
     return product
 	
 # Keep track of min/max values fro X/Y/Z	
-def findBoundBox(vert):
-
-	global minX
-	global maxX
-	global minY
-	global maxY
-	global minZ
-	global maxZ
-	
+def findBoundBox(vert, minX, maxX, minY, maxY, minZ, maxZ):
 	if(vert[0]<minX):
 		minX=vert[0]
 	if(vert[0]>maxX):
 		maxX=vert[0]
-		
 	if(vert[1]<minY):
 		minY=vert[1]
 	if(vert[1]>maxY):
 		maxY=vert[1]
-		
 	if(vert[2]<minZ):
 		minZ=vert[2]
 	if(vert[2]>maxZ):
@@ -137,9 +148,14 @@ def findBoundBox(vert):
 
 # Converts either vertex or vertex normal into normal coordinates
 def getListCoord(vertex, v):
-	xCoord=float(vertex.lstrip(v).split(' ')[0])
-	yCoord=float(vertex.lstrip(v).split(' ')[1])
-	zCoord=float(vertex.lstrip(v).split(' ')[2])
+	if v == 'f ':
+		xCoord=float(vertex.lstrip('f ').split(' ')[0].split('/')[0])
+		yCoord=float(vertex.lstrip('f ').split(' ')[1].split('/')[0])
+		zCoord=float(vertex.lstrip('f ').split(' ')[2].split('/')[0])
+	else:
+		xCoord=float(vertex.lstrip(v).split(' ')[0])
+		yCoord=float(vertex.lstrip(v).split(' ')[1])
+		zCoord=float(vertex.lstrip(v).split(' ')[2])
 	return (xCoord, yCoord, zCoord)
 
 # Removes the duplicate edges on the edgeList
@@ -155,24 +171,26 @@ def buildVertexFaceList(text, vertexList, faceList):
 			if text[i][0]=='v' and ' ' == text[i][1]:
 				vertexList.append(getListCoord(text[i], "v "))
 			elif text[i][0]=='f':
-				faceList.append(text[i])
+				faceList.append(getListCoord(text[i], "f "))
 	return vertexList, faceList
 
 # Find the area and volume using faceList and edgeList
-def findAreaVolume(faceList, edgeList):
+def findAreaVolume(faceList, edgeList, vertexList):
 	surfaceArea = 0
 	volume = 0
 	for i in range(0, len(faceList)):
 		# Break each face into the label numbers of each vertex
-		vertex1=faceList[i].lstrip('f ').split(' ')[0].split('/')[0]
-		vertex2=faceList[i].lstrip('f ').split(' ')[1].split('/')[0]
-		vertex3=faceList[i].lstrip('f ').split(' ')[2].split('/')[0]
+		# vertex1=faceList[i].lstrip('f ').split(' ')[0].split('/')[0]
+		# vertex2=faceList[i].lstrip('f ').split(' ')[1].split('/')[0]
+		# vertex3=faceList[i].lstrip('f ').split(' ')[2].split('/')[0]
+
+		vertex1, vertex2, vertex3 = faceList[i]
 		
 		# Surface area calculated by summing area of each triangular face
-		surfaceArea+=triArea(vertex1,vertex2,vertex3)
+		surfaceArea+=triArea(vertex1,vertex2,vertex3, vertexList)
 		
 		# Volume calculated by the sum of signed volumes of tetrahedrons. Each tetrahedron is formed by the three vertices of a face on the object; the fourth point is the origin
-		volume+=findtetraVolume(vertex1,vertex2,vertex3)
+		volume+=findtetraVolume(vertex1, vertex2, vertex3, vertexList)
 
 		#We define each edge as a list of two vertices and sort so that duplicates can easily be deleted later
 		edge1=sorted([vertex1, vertex2])
@@ -265,7 +283,7 @@ def analyzeObject (filePath):
 
 	# Pop up the 3D file
 	print("Printing the 3D file")
-	plot_3D_dataset(vertexList)
+	# plot_3D_dataset(vertexList)
 
 	print("Calculating fractal dimension.")
 
