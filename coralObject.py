@@ -11,9 +11,9 @@ import os
 import math
 import time
 
-from analysisHelpers import buildVertexFaceList, findAreaVolume, removeDuplicateEdges, findNumHoles, findMinMaxCoord
+from analysisHelpers import buildVertexFaceList, findAreaVolume, removeDuplicateEdges, findNumHoles, findMinMaxCoord, calculateSphericity, determineMinScale
 from FractalDimension import plot_3D_dataset, findBucketFD, findFromReichartFile
-from FDOutputGraphRevision import singleCoralRevision
+from FDOutputGraphRevision import singleCoralRevision, findPlateauPoint
 
 current_directory = os.getcwd()
 
@@ -29,9 +29,11 @@ class Coral:
     numFaces = 0
     numHoles = 0
     surfaceArea = 0
+    sphericity = 0
     volume = 0
     filePath = ""
     analysisTime = 0
+    minScale = []
     onlineFD = 0
     onlineXY = []
     boxDimensions=[]
@@ -155,24 +157,13 @@ class Coral:
         width=abs(self.maxY-self.minY)
         height=abs(self.maxZ-self.minZ)
         boxDimensions = [self.minX, self.minY, self.minZ, self.maxX, self.maxY, self.maxZ]
+        self.sphericity = calculateSphericity(self.volume, self.surfaceArea)
 
         # Set coral object attributes
         self.numEdges = len(self.edgeList)
         self.numVertices = len(self.vertexList)
         self.numFaces = len(self.faceList)
         self.boxDimensions = boxDimensions
-        self.analysisTime = time.time() - start_time
-
-    #	Some print statements to help with visualizing if writing to document doesn't work
-        print("\n\nThere are " + str(len(self.vertexList)) + " vertices.")
-        print("There are " + str(len(self.edgeList)) + " edges.")
-        print("There are " + str(len(self.faceList)) + " faces.")
-        print("There are " + str(self.holes) + " holes in the object.")
-        print ("\nThe bounding box dimensions are {:,.2f}".format(length) + "mm x " + "{:,.2f}".format(width) + "mm x " + "{:,.2f}".format(height) + "mm.")
-        print ("The surface area is {:,.3f}".format(self.surfaceArea) + " square mm.")
-        print ("The volume is {:,.3f}".format(self.volume) + " cubic mm.")
-
-        print ("\n\n--- Elapsed time: {:,.2f}".format(time.time() - start_time) + " seconds ---")
 
         # Pop up the 3D file
         # print("Printing the 3D file")
@@ -184,18 +175,28 @@ class Coral:
         self.bucketFD, self.bucketX, self.bucketY = findBucketFD(self.vertexList, self.findBoundBox())
         self.bucketXY = self.bucketX, self.bucketY
 
-
-        # Print statements
-        print("Bucket FD: {}".format(self.bucketFD))
+        self.minScale = determineMinScale(self.bucketXY[0], findPlateauPoint(self.bucketXY[0], self.bucketXY[1])[1])
 
         # Plotting the FD
         self.plotUnrevisedFD()
         self.plotPlateauFD()
 
+        #	Some print statements to help with visualizing if writing to document doesn't work
+        self.analysisTime = time.time() - start_time
+        print("\n\nThere are " + str(len(self.vertexList)) + " vertices.")
+        print("There are " + str(len(self.edgeList)) + " edges.")
+        print("There are " + str(len(self.faceList)) + " faces.")
+        print("There are " + str(self.holes) + " holes in the object.")
+        print ("\nThe bounding box dimensions are {:,.2f}".format(length) + "mm x " + "{:,.2f}".format(width) + "mm x " + "{:,.2f}".format(height) + "mm.")
+        print ("The surface area is {:,.3f}".format(self.surfaceArea) + " square mm.")
+        print ("The volume is {:,.3f}".format(self.volume) + " cubic mm.")
+        print("Sphericity: {}".format(self.sphericity))
+
+        print ("\n\n--- Elapsed time: {:,.2f}".format(time.time() - start_time) + " seconds ---")
+
         # Using Reichart's fractal dimension
         reichartFD, reichartX, reichartY = findFromReichartFile(self.reichartFilePath)
         self.reichartFD = reichartFD
         self.reichartXY = reichartX, reichartY
-        print("Reichart FD: {}".format(reichartFD))
-
         self.plotReichartFD()
+        print("Reichart FD: {}".format(reichartFD))

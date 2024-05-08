@@ -5,9 +5,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 import math
 
-input_file_path = 'D:\Members\Cathy\coralAnalysis\driveOutputDataMYFD.txt'
-output_file_path = 'D:\Members\Cathy\coralAnalysis\coralAndRevisedFD.txt'
-
 class coral_x_y:  
     def __init__(self, name, x, y):  
         self.name = name  
@@ -87,12 +84,8 @@ def findSlopeList(x, y):
         slopeList.append(slope)
     return slopeList
 
-
 def findSlope(pt1, pt2):
     x1, y1 = pt1
     x2, y2 = pt2
     slope = (y2-y1)/(x2-x1)
     return slope
-
-if __name__ == "__main__":
-    main()

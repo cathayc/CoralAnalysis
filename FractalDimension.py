@@ -23,8 +23,8 @@ def main():
     solidVertexList = createSolidBox(10, 200)
     # shellVertexList = createShellBox(10, 200)
     # findFromReichartFile("D:\Members\Cathy\\box\\solidBox.txt")
-    myCoral = Coral("/Users/cathychang/Desktop/Projects/CoralAnalysis/input/shellBox.obj")
-    fd, X, Y = myCoral.bucketFD()
+    # myCoral = Coral("/Users/cathychang/Desktop/Projects/CoralAnalysis/input/shellBox.obj")
+    # fd, X, Y = myCoral.bucketFD()
     return None
 
 # Doing bucket fractal dimension. We can change the number of samples here
@@ -126,14 +126,13 @@ def createSolidBox(length, numVertices):
 
     with open(outputFile, 'a') as boxFile:
         boxFile.truncate(0)
-        boxFile.write('#box created manually\n\n')
         for i in range(numVertices):
             for j in range(numVertices):
                 for k in range(numVertices):
                     vList.append((i*stepSize, j*stepSize, k*stepSize))
                     v = f'v {i*stepSize} {j*stepSize} {k*stepSize}'
                     boxFile.write(f'{v}\n')
-        for x in range(numVertices*numVertices*numVertices):
+        for x in range(numVertices*numVertices*numVertices-1):
             if x%3==0:
                 boxFile.write("\nf")
             boxFile.write(" {}/{}".format(str(x), str(x)))
@@ -175,5 +174,5 @@ def createShellBox(length, numVertices):
         return vList
 
 if __name__ == "__main__":
-    # main()
+    main()
     print("hi")
