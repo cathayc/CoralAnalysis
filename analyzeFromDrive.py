@@ -179,9 +179,9 @@ def obtainCurrentCoralData(currentCoral):
         numFaces = currentCoral.numFaces
         analysisTime = currentCoral.analysisTime
         onlineFD = currentCoral.onlineFD
-        fileFD = currentCoral.fileFD
+        reichartFD = currentCoral.reichartFD
         [boundingLength, boundingWidth, boundingHeight]=currentCoral.findBoundBox()
-        return str(coralName) + " | " + str(sa) + " | " + str(volume)   + " | " + str(numVertices)   + str(numEdges)   +  " | " + str(numFaces)   + " | " + str(onlineFD) + " | " + str(fileFD) + " | " + str(analysisTime) +"\n"
+        return str(coralName) + " | " + str(sa) + " | " + str(volume)   + " | " + str(numVertices)   + str(numEdges)   +  " | " + str(numFaces)   + " | " + str(onlineFD) + " | " + str(reichartFD) + " | " + str(analysisTime) +"\n"
 
 def writeAndUploadData(currentCoral):
     info_to_append = ""
@@ -189,16 +189,16 @@ def writeAndUploadData(currentCoral):
     # Open local file
     with open(output_filepath, 'a') as outputFile:
         if os.path.getsize(output_filepath) == 0:
-            info_to_append = "File Name: | Surface Area (mm^2) | Volume (mm^3) | myFD | FileFD | numVertices | boundLength | boundWidth | boundHeight | myX | myY\n"
+            info_to_append = "File Name: | Surface Area (mm^2) | Volume (mm^3) | bucketFD | FileFD | numVertices | boundLength | boundWidth | boundHeight | myX | myY\n"
         coralName = currentCoral.coralName
         sa = currentCoral.surfaceArea
         vol = currentCoral.volume
-        myFD = currentCoral.myFD
-        fileFD =  currentCoral.fileFD
+        bucketFD = currentCoral.bucketFD
+        reichartFD =  currentCoral.reichartFD
         numV = currentCoral.numVertices
         boundLength, boundWidth, boundHeight = currentCoral.findBoundBox()
-        myX, myY = currentCoral.myXY
-        info_to_append += "{} | {} | {} | {} | {} | {} | {} | {} | {} | {} | {}\n".format(coralName, sa, vol, myFD, fileFD, numV, boundLength, boundWidth, boundHeight, myX, myY)
+        myX, myY = currentCoral.bucketXY
+        info_to_append += "{} | {} | {} | {} | {} | {} | {} | {} | {} | {} | {}\n".format(coralName, sa, vol, bucketFD, reichartFD, numV, boundLength, boundWidth, boundHeight, myX, myY)
 
         # Write to local file first
         outputFile.write(info_to_append)

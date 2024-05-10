@@ -1,5 +1,5 @@
-from analysisHelpers import analyzeObject
-from coralObject import *
+# from analysisHelpers import analyzeObject
+from coralObject import Coral
 import os, sys
 
 # Get the current working directory
@@ -23,7 +23,7 @@ def analyzeFile(filepath, output_path):
     output_filepath = output_path
     if not checkIfIsFile(coral_filepath, output_filepath):
         sys.exit()
-    currentCoral = analyzeObject(filepath)
+    currentCoral = Coral(filepath)
     writeAndUploadData(currentCoral)
     #currentCoral.writeXYtoFile()
 
@@ -50,16 +50,16 @@ def writeAndUploadData(currentCoral):
     # Open local file
     with open(output_filepath, 'a') as outputFile:
         if os.path.getsize(output_filepath) == 0:
-            info_to_append = "File Name: | Surface Area (mm^2) | Volume (mm^3) | myFD | FileFD | numVertices | boundLength | boundWidth | boundHeight | myX | myY\n"
+            info_to_append = "File Name: | Surface Area (mm^2) | Volume (mm^3) | bucketFD | FileFD | numVertices | boundLength | boundWidth | boundHeight | myX | myY\n"
         coralName = currentCoral.coralName
         sa = currentCoral.surfaceArea
         vol = currentCoral.volume
-        myFD = currentCoral.myFD
-        fileFD =  currentCoral.fileFD
+        bucketFD = currentCoral.bucketFD
+        reichartFD =  currentCoral.reichartFD
         numV = currentCoral.numVertices
         boundLength, boundWidth, boundHeight = currentCoral.findBoundBox()
-        myX, myY = currentCoral.myXY
-        info_to_append += "{} | {} | {} | {} | {} | {} | {} | {} | {} | {} | {}\n".format(coralName, sa, vol, myFD, fileFD, numV, boundLength, boundWidth, boundHeight, myX, myY)
+        myX, myY = currentCoral.bucketXY
+        info_to_append += "{} | {} | {} | {} | {} | {} | {} | {} | {} | {} | {}\n".format(coralName, sa, vol, bucketFD, reichartFD, numV, boundLength, boundWidth, boundHeight, myX, myY)
 
         # Write to local file first
         outputFile.write(info_to_append)
