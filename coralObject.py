@@ -126,6 +126,14 @@ class Coral:
             "onlineFD": self.onlineFD,
             "analysisTime (seconds)": self.analysisTime}
 
+    """ 
+        General analysis of the coral:
+        1. Initiate the coral object
+        2. Analyze vertices, faces, & edges to determine surface area, bounding boxes, volume, holes,e tc.
+        3. Find fractal dimension of coral
+        4. Plot the fractal dimension (revised and unrevised) in the /output directory
+        5. Write all attributes to a the output.csv file
+    """
     def runGeneralAnalysis(self, filePath):
         try:
             with open(filePath,'r') as file:
