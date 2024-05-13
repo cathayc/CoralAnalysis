@@ -50,7 +50,7 @@ class Coral:
     maxY=-math.inf
     minZ=math.inf
     maxZ=-math.inf
-    
+
     def __init__(self, filePath):
         self.filePath = filePath
         self.coralName = filePath.strip('.obj').split("/")[-1]
