@@ -1,4 +1,7 @@
-"""
+""" 
+*** DEPRECATED AS OF MAY 13, 2024 ****
+No longer supports google drive file downloads
+
 This file allows user to analyze from Google Drive by 
 1. Logging into drive with the credential file
 2. Downloading all the files onto the computer with a Zip filee
@@ -13,7 +16,7 @@ You can go ahead and disregard DownloadCoralFile. It was used earlier in testing
 
 from pydrive.auth import GoogleAuth
 from pydrive.drive import GoogleDrive
-from analyzeObj import analyzeObject, analyzeFD
+from analysisHelpers import analyzeObject, analyzeFD
 from coralObject import *
 
 import zipfile
@@ -179,9 +182,9 @@ def obtainCurrentCoralData(currentCoral):
         numFaces = currentCoral.numFaces
         analysisTime = currentCoral.analysisTime
         onlineFD = currentCoral.onlineFD
-        fileFD = currentCoral.fileFD
+        reichartFD = currentCoral.reichartFD
         [boundingLength, boundingWidth, boundingHeight]=currentCoral.findBoundBox()
-        return str(coralName) + " | " + str(sa) + " | " + str(volume)   + " | " + str(numVertices)   + str(numEdges)   +  " | " + str(numFaces)   + " | " + str(onlineFD) + " | " + str(fileFD) + " | " + str(analysisTime) +"\n"
+        return str(coralName) + " | " + str(sa) + " | " + str(volume)   + " | " + str(numVertices)   + str(numEdges)   +  " | " + str(numFaces)   + " | " + str(onlineFD) + " | " + str(reichartFD) + " | " + str(analysisTime) +"\n"
 
 def writeAndUploadData(currentCoral):
     info_to_append = ""
@@ -189,16 +192,16 @@ def writeAndUploadData(currentCoral):
     # Open local file
     with open(output_filepath, 'a') as outputFile:
         if os.path.getsize(output_filepath) == 0:
-            info_to_append = "File Name: | Surface Area (mm^2) | Volume (mm^3) | myFD | FileFD | numVertices | boundLength | boundWidth | boundHeight | myX | myY\n"
+            info_to_append = "File Name: | Surface Area (mm^2) | Volume (mm^3) | bucketFD | FileFD | numVertices | boundLength | boundWidth | boundHeight | myX | myY\n"
         coralName = currentCoral.coralName
         sa = currentCoral.surfaceArea
         vol = currentCoral.volume
-        myFD = currentCoral.myFD
-        fileFD =  currentCoral.fileFD
+        bucketFD = currentCoral.bucketFD
+        reichartFD =  currentCoral.reichartFD
         numV = currentCoral.numVertices
         boundLength, boundWidth, boundHeight = currentCoral.findBoundBox()
-        myX, myY = currentCoral.myXY
-        info_to_append += "{} | {} | {} | {} | {} | {} | {} | {} | {} | {} | {}\n".format(coralName, sa, vol, myFD, fileFD, numV, boundLength, boundWidth, boundHeight, myX, myY)
+        myX, myY = currentCoral.bucketXY
+        info_to_append += "{} | {} | {} | {} | {} | {} | {} | {} | {} | {} | {}\n".format(coralName, sa, vol, bucketFD, reichartFD, numV, boundLength, boundWidth, boundHeight, myX, myY)
 
         # Write to local file first
         outputFile.write(info_to_append)
