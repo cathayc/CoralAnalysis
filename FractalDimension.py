@@ -20,8 +20,8 @@ current_directory = os.getcwd()
 
 def main():
     # Create only if you don't already have the solid and shell vertices
-    solidVertexList = createSolidBox(10, 200)
-    # shellVertexList = createShellBox(10, 200)
+    # solidVertexList = createSolidBox(10, 200)
+    shellVertexList = createShellBox(10, 500)
     # findFromReichartFile("D:\Members\Cathy\\box\\solidBox.txt")
     # myCoral = Coral("/Users/cathychang/Desktop/Projects/CoralAnalysis/input/shellBox.obj")
     # fd, X, Y = myCoral.bucketFD()
@@ -175,4 +175,3 @@ def createShellBox(length, numVertices):
 
 if __name__ == "__main__":
     main()
-    print("hi")
