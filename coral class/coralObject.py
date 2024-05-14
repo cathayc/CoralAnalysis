@@ -1,5 +1,10 @@
 """
-    This file defines the coral object. As analysis continues, it will store all the attributes
+    This file defines class coral. It has a 
+    - list of attributes (surface area, volume, etc.)
+    - Methods to be called to run analysis
+    - Methods to plot graphs
+    - Obtain the important coral attributes
+    
     Important notes:
         reichartFilePath refers to the filepath of the file that's obtained when one runs Jeessica Reichart's 
             Fractal Dimension Toolbox. 
@@ -11,7 +16,7 @@ import os
 import math
 import time
 
-from analysisHelpers import buildVertexFaceList, findAreaVolume, removeDuplicateEdges, findNumHoles, findMinMaxCoord, calculateSphericity, determineMinScale
+from helpers import buildVertexFaceList, findAreaVolume, removeDuplicateEdges, findNumHoles, findMinMaxCoord, calculateSphericity, determineMinScale
 from FractalDimension import plot_3D_dataset, findBucketFD, findFromReichartFile
 from FDOutputGraphRevision import singleCoralRevision, findPlateauPoint
 

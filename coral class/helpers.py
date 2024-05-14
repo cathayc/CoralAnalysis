@@ -3,20 +3,7 @@ A ".obj" file is one way to represent a 3d object - it has all the relevant info
 generate a 3d model including xyz corrdinates of every vertex, the vertex normals, and which three vertices form a face.
 This program takes an OBJ file and returns relevant geometric features about the model such as the surface area, the volume,
 and whether there are any holes in the object. 
-
-Code written by Michael Clougher: 
-	TriArea, geetVertexCoord, dist, findtetraVolume, cross, dot, findBoundBox
-
-Code written by Cathy Chang to integrate everything with FD analysis:
-	getListCoord, analyzeFD, analyzeObject
-
-The most important method to be used is analyzeObj, which analyzes the coral object and returns myCoral.
-Example of how to usee the analyzeObj:
-	coral2505 = analyzeObject("D:\Members\Cathy\\2505\\2505.obj")
-
-
 '''
-
 
 import itertools
 import time

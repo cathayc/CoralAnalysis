@@ -16,7 +16,7 @@ You can go ahead and disregard DownloadCoralFile. It was used earlier in testing
 
 from pydrive.auth import GoogleAuth
 from pydrive.drive import GoogleDrive
-from analysisHelpers import analyzeObject, analyzeFD
+from helpers import analyzeObject, analyzeFD
 from coralObject import *
 
 import zipfile
