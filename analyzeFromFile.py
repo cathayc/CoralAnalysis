@@ -1,5 +1,5 @@
 # from analysisHelpers import analyzeObject
-from coralObject import Coral
+from coral.coralObject import Coral
 import os, sys, csv
 # Get the current working directory
 current_directory = os.getcwd()

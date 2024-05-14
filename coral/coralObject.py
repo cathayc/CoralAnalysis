@@ -16,9 +16,9 @@ import os
 import math
 import time
 
-from helpers import buildVertexFaceList, findAreaVolume, removeDuplicateEdges, findNumHoles, findMinMaxCoord, calculateSphericity, determineMinScale
-from FractalDimension import plot_3D_dataset, findBucketFD, findFromReichartFile
-from FDOutputGraphRevision import singleCoralRevision, findPlateauPoint
+from coral.helpers import buildVertexFaceList, findAreaVolume, removeDuplicateEdges, findNumHoles, findMinMaxCoord, calculateSphericity, determineMinScale
+from coral.FractalDimension import plot_3D_dataset, findBucketFD, findFromReichartFile
+from coral.FDOutputGraphRevision import singleCoralRevision, findPlateauPoint
 
 current_directory = os.getcwd()
 
