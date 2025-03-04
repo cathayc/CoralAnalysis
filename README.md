@@ -33,6 +33,3 @@ The corals are kept in alreadyCutIncludePNG.zip. This includes all the coral fil
 
 ## Output Data ##
 `output/output.txt`: result of running the program directly.
-
-# Original paper manuscript #
-https://drive.google.com/file/d/1GjFXoJbpzT6qxme6W0jr7Peh5jjzYSRD/view?usp=sharing
